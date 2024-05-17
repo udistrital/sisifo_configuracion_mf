@@ -1,10 +1,18 @@
+import { APP_BASE_HREF } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+export const routes: Routes = [
+  { 
+    path: "gestion-roles",
+    loadChildren: () => import ('./modules/gestion-roles/gestion-roles.module').then(m => m.GestionRolesModule),
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [{ provide: APP_BASE_HREF, useValue: "/configuracion/" }],
 })
+
 export class AppRoutingModule { }
