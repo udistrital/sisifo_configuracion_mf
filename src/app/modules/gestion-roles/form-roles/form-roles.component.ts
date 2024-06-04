@@ -1,46 +1,63 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Rol, ROL_ADMINISTRADOR, ROL_ANALISTA, ROL_AUDITOR, ROL_EJECUTOR, ROL_JEFE, ROL_SOPORTE, Usuario } from '../utils';
+import { Rol, Usuario } from '../utils';
 import { RequestManager } from 'src/app/modules/services/requestManager';
+import { TokenService } from 'src/app/modules/services/token'; 
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-form-roles',
   templateUrl: './form-roles.component.html',
   styleUrls: ['./form-roles.component.scss']
 })
-
-export class FormRolesComponent implements OnInit{
-
-  rolesUsuario: Rol[] = [
-    { rol: ROL_ANALISTA, selected: false },
-  ];
+export class FormRolesComponent implements OnInit {
+  rolesUsuario: Rol[] = [];
   rolesSistema: Rol[] = [
-    { rol: ROL_AUDITOR, selected: false },
+    { rol: 'ROL_AUDITOR', selected: false },
+    { rol: 'ROL_EJECUTOR', selected: false },
+    { rol: 'ROL_SOPORTE', selected: false }
   ];
 
-  @Input() usuario!: Usuario;
+  @Input() usuario: Usuario = {
+    role: [],
+    documento: '',
+    email: '',
+    Estado: ''
+  };
+
   @Output() errorEnPeticion = new EventEmitter<any>();
 
   constructor(
     private request: RequestManager,
     private router: Router,
+    private tokenService: TokenService // Inyecta el servicio de token
   ) { }
 
-  //codigo de planeacion en el que toman los roles del usuario en la cuenta actual
-  // ngOnInit(): void {
-  //   this.rolesUsuario = this.formatearRoles(this.usuario);
-  //   this.rolesSistema = this.rolesUsuario.filter(usuarioRol => { // Nos aseguramos de mostrar solo los roles de SISGPLAN
-  //     return this.rolesSistema.some(sistemaRol => sistemaRol.rol === usuarioRol.rol);
-  //   })
-  //   this.validarRoles(this.rolesUsuario, this.rolesSistema);
-  // }
-
   ngOnInit(): void {
-    this.rolesUsuario = this.rolesUsuario;
-    this.rolesSistema = this.rolesSistema;
+    this.initializeUserFromToken();
+    this.rolesUsuario = this.formatearRoles(this.usuario);
+    this.rolesSistema = this.rolesSistema.filter(sistemaRol => {
+      return !this.rolesUsuario.some(usuarioRol => usuarioRol.rol === sistemaRol.rol);
+    });
+
     this.validarRoles(this.rolesUsuario, this.rolesSistema);
+  }
+
+  //Se obtienen los datos del usuario desde el token en el local storage de manera temporal
+  initializeUserFromToken(): void {
+    const token = this.tokenService.getToken();
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      this.usuario = {
+        role: payload.roles || ['ROL_SOPORTE'], //Se agrega un rol por defecto para pruebas
+        documento: payload.documento || '',
+        email: payload.email || '',
+        Estado: payload.Estado || 'Activo'
+      };
+    }
+    console.log(this.usuario);
   }
 
   seleccionarRol(item: Rol) {
@@ -248,9 +265,10 @@ export class FormRolesComponent implements OnInit{
     this.rolesSistema.forEach(item => item.selected = false);
   }
 
-  formatearRoles(usuario: Usuario) {
-    return usuario.role.filter(rol => rol !== 'Internal/everyone' && rol !== 'Internal/selfsignup')
-                              .map(rol => ({ "rol": rol, "selected": false }));
+  formatearRoles(usuario: Usuario): Rol[] {
+    return usuario.role
+      .filter(rol => rol !== 'Internal/everyone' && rol !== 'Internal/selfsignup')
+      .map(rol => ({ rol: rol, selected: false }));
   }
 
   validarRoles(rolesUsuario: Rol[], rolesSistema: Rol[]) {
