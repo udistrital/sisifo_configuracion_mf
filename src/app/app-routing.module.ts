@@ -1,5 +1,6 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -12,7 +13,9 @@ export const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [{ provide: APP_BASE_HREF, useValue: "/configuracion/" }],
+  providers: [{ provide: APP_BASE_HREF, useValue: "/configuracion/" },
+  provideHttpClient(withFetch())
+  ],
 })
 
 export class AppRoutingModule { }

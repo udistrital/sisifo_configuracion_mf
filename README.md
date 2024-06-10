@@ -1,27 +1,167 @@
-# ConfiguracionMf
+# auditoria_plan_mejoramiento_usuario_mf
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.14.
+Cliente para la gestión del usuario_mf, manejo de usuarios y control de roles, parte del sistema de auditoria (Sísifo). Este proyecto está desarrollado con Angular.
 
-## Development server
+## Especificaciones Técnicas
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### Tecnologías Implementadas y Versiones
 
-## Code scaffolding
+- [Angular](https://angular.io/docs) 16.2.14
+  - Incluye Animations, Common, Compiler, Core, Forms, Platform-Browser, Platform-Browser-Dynamic, Router
+- [Angular Material](https://material.angular.io/) 16.2.14
+- [RxJS](https://rxjs.dev/guide/overview) ~7.8.0
+- [Single-spa](https://single-spa.js.org/) >=4.0.0
+  - Incluye single-spa-angular
+- [SweetAlert2](https://sweetalert2.github.io/) 11.11.0
+- [ts-md5](https://github.com/cotag/ts-md5) 1.3.1
+- [tslib](https://github.com/Microsoft/tslib) 2.3.0
+- [Zone.js](https://github.com/angular/angular/tree/master/packages/zone.js) ~0.13.0
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Variables de Entorno
 
-## Build
+```javascript
+export const environment = {
+  production: false,
+  apiUrl: "http://localhost:4202/",
+  AUTENTICACION_MID: [URL de API MID Autenticación],
+  TOKEN: {
+    AUTORIZATION_URL: [URL de Autorización - login],
+    CLIENTE_ID: [Token de acceso],
+    RESPONSE_TYPE: [Tipo de Respuesta del token],
+    SCOPE: [Alcance de la solicitud],
+    REDIRECT_URL: [URL de redirección],
+    SIGN_OUT_URL: [URL de Cerrar Sesión - logout],
+    SIGN_OUT_REDIRECT_URL: [URL de redirección despues de cerrar sesion],
+    AUTENTICACION_MID:  [URL de API MID Autenticación],
+  },
+};
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Ejecución del Proyecto
 
-## Running unit tests
+Este proyecto es parte de una infraestructura de microfrontend implementada con la librería Single-SPA. Para ejecutarlo correctamente, es necesario levantar dos aplicaciones independientes: el **Root** y el **Core**.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Root
 
-## Running end-to-end tests
+El Root contiene la lógica de Sísifo
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Pasos para la Ejecución del Root
 
-## Further help
+1. Clonar el repositorio del Root:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+   ```bash
+   git clone https://github.com/udistrital/auditoria_plan_mejoramiento_root_mf
+   ```
+
+2. Acceder al directorio del repositorio clonado:
+
+   ```bash
+   cd auditoria_plan_mejoramiento_root_mf
+   ```
+
+3. Instalar las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+4. Iniciar el Root:
+   ```bash
+   npm start
+   ```
+
+### Core
+
+El Core contiene componentes generales que construyen el layout y administran aspectos como la autenticación.
+
+### Pasos para la Ejecución del Core
+
+1. Clonar el repositorio del Core:
+
+   ```bash
+   git clone https://github.com/udistrital/core_mf_cliente
+   ```
+
+2. Acceder al directorio del repositorio clonado:
+
+   ```bash
+   cd core_mf_cliente
+   ```
+
+3. Instalar las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+4. Iniciar el Core:
+
+   ```bash
+   npm start
+   ```
+
+### auditoria_plan_mejoramiento_usuario_mf
+
+Microcliente de gestion de usuarios
+
+### Pasos para la Ejecución de usuario_mf
+
+1. Clonar el repositorio:
+
+   ```bash
+   git clone https://github.com/udistrital/auditoria_plan_mejoramiento_usuario_mf
+   ```
+
+2. Acceder al directorio del repositorio clonado:
+
+   ```bash
+   cd auditoria_plan_mejoramiento_usuario_mf
+   ```
+
+3. Instalar las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+4. Iniciar usuario_mf:
+
+   ```bash
+   npm start
+   ```
+
+Con estos pasos, se tendrán las partes mínimas necesarias para ejecutar el proyecto en un entorno local.
+
+## Ejecución Dockerfile
+
+```bash
+# Does not apply
+```
+
+## Ejecución docker-compose
+
+```bash
+# Does not apply
+```
+
+## Ejecución Pruebas
+
+```bash
+# Developing
+```
+
+## Estado CI
+
+```bash
+# Developing
+```
+| 
+## Licencia
+
+[This file is part of auditoria_plan_mejoramiento_usuario_mf](LICENSE)
+
+auditoria_plan_mejoramiento_usuario_mf is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (atSara Sampaio your option) any later version.
+
+auditoria_plan_mejoramiento_usuario_mf is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with auditoria_plan_mejoramiento_usuario_mf. If not, see https://www.gnu.org/licenses/.
