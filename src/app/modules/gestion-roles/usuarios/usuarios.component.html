@@ -1,31 +1,15 @@
-<mat-card  [style.width.%]="97">
-	<div class="container-border">
-		<mat-card-header>
-			<mat-card-title>Gestión de Usuarios</mat-card-title>
-		</mat-card-header>
-		<mat-card-content>
-			<u class="textGuide">
-				En esta sección usted podrá consultar los usuarios asociados al sistema SISIFO, realizando la búsqueda por rol o correo.
-			</u>
-		</mat-card-content>
-		<mat-card-content>
-			<div class="container-border">
-				<mat-card-header color="primary">
-					<mat-card-title>Búsqueda de usuarios</mat-card-title>
-				</mat-card-header>
-				<mat-card-content>
-					<form>
-						<mat-form-field  [style.width.%]="100">
-							<mat-label>Correo electrónico</mat-label>
-							<input matInput formControlName="correo" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
-						</mat-form-field>
-					</form>
-				</mat-card-content>
-			</div>
-			<div style="text-align: center;">
-				<button mat-raised-button color="primary" >Buscar</button>
-				<button mat-raised-button color="primary" >Limpiar</button>
-			</div>
-		</mat-card-content>
-	</div>
+<mat-card [style.width.%]="97">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <app-dynamic-form [defineForm]="formParams" (createdForm)="onFormCreated($event)" (updatedForm)="onFormUpdated($event)"></app-dynamic-form>
+
+    <!-- Agrega el botón aquí -->
+    <button mat-raised-button color="primary" (click)="printFormData()">Imprimir Datos del Formulario</button>
 </mat-card>

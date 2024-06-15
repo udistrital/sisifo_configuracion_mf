@@ -1,0 +1,49 @@
+<form *ngIf="builded" [formGroup]="formGroup">
+    <div class="row">
+        <div *ngFor="let nombre of formFields" [class]="defineForm[nombre].claseGrid + ' box-field'" >
+            <ng-container [ngSwitch]="defineForm[nombre].tipo">
+                
+                <!-- Tipo Input -->    
+                <mat-form-field *ngSwitchCase="'input'" floatLabel="auto">
+                    <mat-label>{{ defineForm[nombre].requerido ? '* '+defineForm[nombre].label : defineForm[nombre].label }}:</mat-label>
+                    <input matInput [formControlName]="nombre" [type]="defineForm[nombre].tipoDato" [placeholder]="defineForm[nombre].placeholder || ''"
+                            [min]="(defineForm[nombre].minimo || defineForm[nombre].minimo === 0)?defineForm[nombre].minimo:undefined"
+                            [max]="defineForm[nombre].maximo?defineForm[nombre].maximo:undefined"
+                            [step]="defineForm[nombre].paso?defineForm[nombre].paso:1"
+                            [readonly]="defineForm[nombre].soloLectura ? defineForm[nombre].soloLectura : false">
+                           
+                    <mat-hint *ngIf="formGroup.get(nombre)?.touched && formGroup.get(nombre)?.errors?.['required']">{{ 'GLOBAL.falta_campo' }}</mat-hint>
+                    <mat-hint *ngIf="formGroup.get(nombre)?.touched && formGroup.get(nombre)?.errors?.['min']">{{ 'GLOBAL.err_min'  }}{{defineForm[nombre].minimo}}</mat-hint>
+                    <mat-hint *ngIf="formGroup.get(nombre)?.touched && formGroup.get(nombre)?.errors?.['max']">{{ 'GLOBAL.err_max'  }}</mat-hint>
+                </mat-form-field>
+                
+                <!-- Tipo select -->
+                <mat-form-field *ngSwitchCase="'select'" floatLabel="auto">
+                    <mat-label>{{ defineForm[nombre].requerido ? '* '+defineForm[nombre].label : defineForm[nombre].label }}:</mat-label>
+                    <mat-select [formControlName]="nombre" placeholder="{{ 'GLOBAL.seleccionar'}}" [disabled]="defineForm[nombre].soloLectura ? defineForm[nombre].soloLectura : false">
+
+                        <ng-container *ngIf="defineForm[nombre].opciones">
+                            <mat-option *ngFor="let opcion of defineForm[nombre].opciones" [value]="opcion">{{ opcion.Nombre ? opcion.Nombre : opcion.nombre }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                    <mat-hint *ngIf="formGroup.get(nombre)?.touched && formGroup.get(nombre)?.errors?.['required']">{{ 'GLOBAL.falta_campo' }}</mat-hint>
+                </mat-form-field>
+                <!-- Tipo file Multiple -->
+
+                 <!-- Tipo Textarea -->
+                 <mat-form-field *ngSwitchCase="'textarea'" floatLabel="auto">
+                    <mat-label>{{ defineForm[nombre].requerido ? '* ' + defineForm[nombre].label : defineForm[nombre].label }}:</mat-label>
+                    <textarea matInput [formControlName]="nombre" [placeholder]="defineForm[nombre].placeholder || ''"
+                              [rows]="defineForm[nombre].rows || 5"
+                              [readonly]="defineForm[nombre].soloLectura ? defineForm[nombre].soloLectura : false"></textarea>
+                    <mat-hint *ngIf="formGroup.get(nombre)?.touched && formGroup.get(nombre)?.errors?.['required']">{{ 'GLOBAL.falta_campo' }}</mat-hint>
+                </mat-form-field>
+                
+                <!-- Yo si hago algo, soy un separador -->
+                <div *ngSwitchCase="'separator'" class="separator"></div>
+                <!-- Soy un espacio vacío -->
+                <div *ngSwitchDefault></div>
+            </ng-container>
+        </div>
+    </div>
+</form>

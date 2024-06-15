@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { FormsModule } from '@angular/forms';
 import { GestionRolesRoutingModule } from './gestion-roles-routing.module';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { FormRolesComponent } from './form-roles/form-roles.component'
 import { HttpClientModule,  provideHttpClient } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ComponentsModule } from '../components/components.module';
 
 //Material
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -28,7 +30,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatSelectModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatIconModule
+    MatIconModule,
+    ReactiveFormsModule,
+    ComponentsModule,
+    FormsModule
   ]
 })
 export class GestionRolesModule { }

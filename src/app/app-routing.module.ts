@@ -4,10 +4,12 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { 
-    path: "gestion-roles",
-    loadChildren: () => import ('./modules/gestion-roles/gestion-roles.module').then(m => m.GestionRolesModule),
+  {
+    path: "modules",
+    loadChildren: () => import ('./modules/modules.module').then(m => m.ModulesModule),
   },
+    
+  
 ];
 
 @NgModule({

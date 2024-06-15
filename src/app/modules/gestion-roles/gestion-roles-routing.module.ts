@@ -4,12 +4,7 @@ import { UsuariosComponent } from './usuarios/usuarios.component';
 import { FormRolesComponent } from './form-roles/form-roles.component'
 
 
-
 const routes: Routes = [
-  {
-    path: '',
-    component: FormRolesComponent,
-    children: [
       {
         path: 'form-roles',
         component: FormRolesComponent
@@ -18,10 +13,6 @@ const routes: Routes = [
       path: 'usuarios',
       component: UsuariosComponent
       },
-    
-  ],
-  }
-  
 ];
 
 @NgModule({
