@@ -14,12 +14,11 @@ import { environment } from 'src/environments/environment';
 })
 export class FormRolesComponent implements OnInit {
   rolesUsuario: Rol[] = [];
-  rolesSistema: Rol[] = [
-    { rol: 'ROL_AUDITOR', selected: false },
-    { rol: 'ROL_EJECUTOR', selected: false },
-    { rol: 'ROL_SOPORTE', selected: false }
+  rolesSistemaSistema: { rol: Rol, index: number }[] = [
+    { rol: { rol: 'AUDITOR', selected: false }, index: 2 },
+    { rol: { rol: 'EJECUTOR', selected: false }, index: 3 }
   ];
-
+  rolesSistema: Rol[] = [{ rol: '', selected: false }];
   @Input() usuario: Usuario = {
     role: [],
     documento: '',
@@ -37,11 +36,11 @@ export class FormRolesComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeUserFromToken();
+    this.rolesSistema= this.formatoRolesSistema(this.rolesSistemaSistema);
     this.rolesUsuario = this.formatearRoles(this.usuario);
     this.rolesSistema = this.rolesSistema.filter(sistemaRol => {
       return !this.rolesUsuario.some(usuarioRol => usuarioRol.rol === sistemaRol.rol);
     });
-
     this.validarRoles(this.rolesUsuario, this.rolesSistema);
   }
 
@@ -51,7 +50,7 @@ export class FormRolesComponent implements OnInit {
     if (token) {
       const payload = JSON.parse(atob(token.split('.')[1]));
       this.usuario = {
-        role: payload.roles || ['ROL_SOPORTE'], //Se agrega un rol por defecto para pruebas
+        role: payload.roles || ['AUDITOR'], //Se agrega un rol por defecto para pruebas
         documento: payload.documento || '',
         email: payload.email || '',
         Estado: payload.Estado || 'Activo'
@@ -60,6 +59,14 @@ export class FormRolesComponent implements OnInit {
     console.log(this.usuario);
   }
 
+  formatoRolesSistema(roles: { rol: Rol; index: number; }[]):Rol[]{
+    return roles.map(item => item.rol);
+   }
+
+  formatoIndiceRolesSistema(nombreRol:String):number|undefined{
+    let found = this.rolesSistemaSistema.find(item => item.rol.rol === nombreRol);
+    return found ? found.index : undefined;
+   }
   seleccionarRol(item: Rol) {
     item.selected = !item.selected;
   }
@@ -81,8 +88,10 @@ export class FormRolesComponent implements OnInit {
         rolesSeleccionados.reduce((promiseChain, rol) => {
           return promiseChain.then(() => {
             return new Promise((resolve, reject) => {
+              //let rolId=  this.formatoIndiceRolesSistema(rol.rol);
               let body = {
                 "user": this.usuario.email,
+                //"rol": rolId,
                 "rol": rol.rol
               };
               this.mostrarMensajeCarga();
@@ -158,8 +167,10 @@ export class FormRolesComponent implements OnInit {
         rolesSeleccionados.reduce((promiseChain, rol) => {
           return promiseChain.then(() => {
             return new Promise((resolve, reject) => {
+              //let rolId=  this.formatoIndiceRolesSistema(rol.rol);
               let body = {
                 "user": this.usuario.email,
+                //"rol": rolId,
                 "rol": rol.rol
               };
               this.mostrarMensajeCarga();
@@ -277,6 +288,7 @@ export class FormRolesComponent implements OnInit {
 
     // Filtra los roles del sistema excluyendo los del usuario
     this.rolesSistema = rolesSistema.filter(role => !rolesSet.has(JSON.stringify(role)));
+
   }
 
   enviarErrorPeticion() {
