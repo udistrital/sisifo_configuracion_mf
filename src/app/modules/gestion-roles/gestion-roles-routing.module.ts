@@ -7,21 +7,13 @@ import { FormRolesComponent } from './form-roles/form-roles.component'
 
 const routes: Routes = [
   {
-    path: '',
-    component: FormRolesComponent,
-    children: [
-      {
-        path: 'form-roles',
-        component: FormRolesComponent
-      },
-      {
-      path: 'usuarios',
-      component: UsuariosComponent
-      },
-    
-  ],
-  }
-  
+    path: 'form-roles',
+    component: FormRolesComponent
+  },
+  {
+    path: 'usuarios',
+    component: UsuariosComponent
+  }, 
 ];
 
 @NgModule({
