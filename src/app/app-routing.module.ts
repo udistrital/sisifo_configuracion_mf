@@ -1,3 +1,4 @@
+import { GestionUsuariosModule } from './modules/gestion-usuarios/gestion-usuarios.module';
 import { APP_BASE_HREF } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
@@ -7,6 +8,10 @@ export const routes: Routes = [
   { 
     path: "gestion-roles",
     loadChildren: () => import ('./modules/gestion-roles/gestion-roles.module').then(m => m.GestionRolesModule),
+  },
+  { 
+    path: "gestion-usuarios",
+    loadChildren: () => import ('./modules/gestion-usuarios/gestion-usuarios.module').then(m => m.GestionUsuariosModule),
   },
 ];
 
