@@ -6,3 +6,4 @@ export const ROL_ANALISTA = 'ANALISTA';
 export const ROL_SOPORTE = 'SOPORTE';
 
 
+
