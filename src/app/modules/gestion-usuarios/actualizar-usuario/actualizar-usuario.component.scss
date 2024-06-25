@@ -1,0 +1,58 @@
+.inputs{
+    display: flex;
+    gap: 5rem;
+    max-width: 80%;
+}
+
+.correo{
+    width: 300px;
+}
+
+.nombre{
+    display: flex;
+    flex-direction: column;
+    width: 78%;
+    max-width: 80%;
+}
+
+.selector{
+    display: flex;
+    gap: 6rem;
+    
+}
+
+.rol{
+    width: 310px;
+}
+
+.container-border {
+    margin: 10% 10% 10% 10%;
+    width: 800px;
+    border: 1px solid var(--primary);
+    padding: 2% 5%;
+    border-radius: 50px;
+    max-width: 1200px;
+    margin: 3% auto ;
+}
+
+.fechas{
+    display: flex;
+    gap: 8rem;
+}
+
+.button-container {
+    margin: 1%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end; 
+    gap: 10px;
+}
+
+.titulo{
+    color: var(--primary);
+}
+
+.Bcancelar{
+    background-color: var(--danger-base) !important;
+    color: white !important;
+}

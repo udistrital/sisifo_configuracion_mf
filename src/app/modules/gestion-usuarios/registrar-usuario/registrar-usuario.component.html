@@ -1,0 +1,62 @@
+<br />
+<br />
+<br />
+<br />
+
+<div class="container-border">
+  <h2 class="titulo">Crear Usuario(a)</h2>
+
+  <div class="inputs">
+    <mat-form-field appearance="fill">
+      <mat-label>Documento de identidad:</mat-label>
+      <input type="text" matInput />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="correo">
+      <mat-label>Correo:</mat-label>
+      <input type="text" matInput />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="nombre">
+    <mat-form-field appearance="fill">
+      <mat-label>Nombres y Apellidos:</mat-label>
+      <input type="text" matInput />
+    </mat-form-field>
+  </div>
+
+  <div class="Rol">
+    <mat-form-field class="rol-width">
+      <mat-label >Rol:</mat-label>
+        <mat-select  >
+            <mat-option  mat-option *ngFor="let rol of roles" [value]="rol">
+                {{ rol }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="fechas">
+    <mat-form-field >
+        <mat-label>Fecha Inicial Rol:</mat-label>
+        <input matInput [matDatepicker]="picker1">
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field >
+        <mat-label>Fecha Final Rol:</mat-label>
+        <input matInput [matDatepicker]="picker2">
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+    
+  </div>
+
+  <div class="button-container">
+    <button mat-raised-button class="Bcancelar" >Cancelar</button>
+    <button mat-raised-button color="primary" (click)="printFormData()">Guardar</button>
+  </div>
+</div>
