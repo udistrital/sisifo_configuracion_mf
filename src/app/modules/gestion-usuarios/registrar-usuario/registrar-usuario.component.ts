@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { ROL_ADMINISTRADOR, ROL_ANALISTA, ROL_AUDITOR, ROL_EJECUTOR, ROL_JEFE, ROL_SOPORTE } from '../../gestion-roles/utils';
+
+import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
+
+export interface RolRegistro {
+  Nombre: string;
+  Id:     number;
+}
 
 @Component({
   selector: 'app-registrar-usuario',
@@ -8,18 +14,30 @@ import { ROL_ADMINISTRADOR, ROL_ANALISTA, ROL_AUDITOR, ROL_EJECUTOR, ROL_JEFE, R
 })
 export class RegistrarUsuarioComponent {
 
-   roles =[
-    ROL_ADMINISTRADOR,
-    ROL_AUDITOR,
-    ROL_EJECUTOR,
-    ROL_JEFE,
-    ROL_ANALISTA,
-    ROL_SOPORTE
-  ]
+   roles: RolRegistro[] =[]
 
   fechaInicioValue= " ";
   fechaFinValue= " ";
 
+  constructor(private historico_service: HistoricoUsuariosMidService){
+    this.historico_service.get("roles/").subscribe({
+      next:(data: any)=>{
+        this.roles=data
+      }
+    })
+  }
+
+  BuscarDocumento(documento: string) {
+    console.log('Documento:', documento);
+    
+  }
+
+  BuscarCorreo(correo: string) {
+    console.log('Correo:', correo);
+    
+  }
+
+  
   printFormData(): void {
     if (this.printFormData) {
       console.log('Form Data:', this.printFormData);

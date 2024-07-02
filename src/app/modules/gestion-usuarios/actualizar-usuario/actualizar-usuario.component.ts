@@ -1,26 +1,37 @@
 import { Component } from '@angular/core';
-import { ROL_ADMINISTRADOR, ROL_ANALISTA, ROL_AUDITOR, ROL_EJECUTOR, ROL_JEFE, ROL_SOPORTE } from '../../gestion-roles/utils';
 
+import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
+
+
+export interface RolRegistro {
+  Nombre: string;
+  Id:     number;
+}
 
 @Component({
   selector: 'app-actualizar-usuario',
   templateUrl: './actualizar-usuario.component.html',
-  styleUrls: ['./actualizar-usuario.component.scss']
+  styleUrls: ['./actualizar-usuario.component.scss'],
 })
 export class ActualizarUsuarioComponent {
+  roles: RolRegistro[] = [];
 
-  roles =[
-    ROL_ADMINISTRADOR,
-    ROL_AUDITOR,
-    ROL_EJECUTOR,
-    ROL_JEFE,
-    ROL_ANALISTA,
-    ROL_SOPORTE
-  ]
+  constructor(private historico_service: HistoricoUsuariosMidService) {
+    this.historico_service.get('roles/').subscribe({
+      next: (data: any) => {
+        this.roles = data;
+      },
+    });
+  }
 
-  estados =[
-    "ACTIVO",
-    "INACTIVO"
-  ]
+  BuscarDocumento(documento: string) {
+    console.log('Documento:', documento);
+  }
 
+  BuscarCorreo(correo: string) {
+    console.log('Correo:', correo);
+  }
+
+  
+  estados = ['ACTIVO', 'INACTIVO'];
 }

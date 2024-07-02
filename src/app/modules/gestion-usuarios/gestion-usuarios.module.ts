@@ -16,6 +16,7 @@ import { NgFor } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ActualizarUsuarioComponent } from './actualizar-usuario/actualizar-usuario.component';
+import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,9 @@ import { ActualizarUsuarioComponent } from './actualizar-usuario/actualizar-usua
     NgFor,
     MatCardModule,
     MatFormFieldModule
+  ],
+  providers:[
+    HistoricoUsuariosMidService,
   ]
 })
 export class GestionUsuariosModule { }

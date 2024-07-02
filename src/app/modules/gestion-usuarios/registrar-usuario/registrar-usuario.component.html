@@ -9,17 +9,21 @@
   <div class="inputs">
     <mat-form-field appearance="fill">
       <mat-label>Documento de identidad:</mat-label>
-      <input type="text" matInput />
-      <mat-icon matSuffix>search</mat-icon>
+      <input type="text" matInput #documento />
+      <button mat-icon-button matSuffix (click)="BuscarDocumento(documento.value)">
+        <mat-icon>search</mat-icon>
+      </button>
     </mat-form-field>
-
+  
     <mat-form-field appearance="fill" class="correo">
       <mat-label>Correo:</mat-label>
-      <input type="text" matInput />
-      <mat-icon matSuffix>search</mat-icon>
+      <input type="text" matInput #correo />
+      <button mat-icon-button matSuffix (click)="BuscarCorreo(correo.value)">
+        <mat-icon>search</mat-icon>
+      </button>
     </mat-form-field>
   </div>
-
+  
   <div class="nombre">
     <mat-form-field appearance="fill">
       <mat-label>Nombres y Apellidos:</mat-label>
@@ -31,8 +35,8 @@
     <mat-form-field class="rol-width">
       <mat-label >Rol:</mat-label>
         <mat-select  >
-            <mat-option  mat-option *ngFor="let rol of roles" [value]="rol">
-                {{ rol }}
+            <mat-option  mat-option *ngFor="let rol of roles" [value]="rol.Id">
+                {{ rol.Nombre }}
             </mat-option>
         </mat-select>
     </mat-form-field>
