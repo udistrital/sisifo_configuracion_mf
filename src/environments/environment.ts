@@ -14,6 +14,5 @@ export const environment = {
     HISTORICO_USUARIOS_MID: 'http://localhost:8080/v1/',
     TERCEROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/terceros_crud/v1/',
     AUTENTICACION: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol"
-,
 };
 

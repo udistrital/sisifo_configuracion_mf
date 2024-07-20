@@ -1,5 +1,5 @@
 import { AutenticacionService } from './../../../services/autenticacion.service';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
@@ -17,9 +17,12 @@ export interface RolRegistro {
   styleUrls: ['./registrar-usuario.component.scss'],
 })
 export class RegistrarUsuarioComponent {
+  @ViewChild('documentoInput') documentoInput!: ElementRef;
+  @ViewChild('emailInput') emailInput!: ElementRef;
+
   roles: RolRegistro[] = [];
   nombreCompleto: string = '';
-  
+  identificacion: string = '';
   fechaInicioValue = ' ';
   fechaFinValue = ' ';
 
@@ -36,8 +39,8 @@ export class RegistrarUsuarioComponent {
     });
   }
 
-  BuscarDocumento(documento: string) {
-    console.log('Documento:', documento);
+  BuscarTercero(documento: string) {
+    console.log('Documento para tercero:', documento);
     this.terceros_service
       .get(`tercero/identificacion?query=${documento}`)
       .subscribe({
@@ -62,10 +65,31 @@ export class RegistrarUsuarioComponent {
       });
   }
 
-  usuarioNoExisteModal(): void {
-    this.dialog.open(UsuarioNoEncontradoComponent, {
-      width: '400px',
-    });
+  BuscarDocumento(documento: string) {
+    if (!documento) {
+      this.usuarioNoExisteModal();
+      return;
+    }
+    console.log('Documento:', documento);
+    this.autenticacionService
+      .getDocumento(`token/documentoToken`, documento)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Datos del usuario:', data);
+          if (data && data.documento) {
+            this.identificacion = data.documento;
+            console.log('Identificacion:', this.identificacion);
+            this.BuscarTercero(this.identificacion);
+            this.emailInput.nativeElement.value = data.email;
+          } else {
+            //this.usuarioNoExisteModal();
+          }
+        },
+        error: (err: any) => {
+          console.error('Error al consultar el documento:', err);
+          this.usuarioNoExisteModal();
+        },
+      });
   }
 
   BuscarCorreo(correo: string) {
@@ -74,12 +98,14 @@ export class RegistrarUsuarioComponent {
       return;
     }
     console.log('Correo:', correo);
-    this.autenticacionService.getEmail(correo).subscribe({
+    this.autenticacionService.getEmail(`token/userRol`, correo).subscribe({
       next: (data: any) => {
         console.log('Datos del usuario:', data);
-        if (data && data.FamilyName ) {
-          this.nombreCompleto = data.FamilyName;
-          console.log('Family Name:', this.nombreCompleto);
+        if (data && data.documento) {
+          this.identificacion = data.documento;
+          console.log('identificacion:', this.identificacion);
+          this.BuscarTercero(this.identificacion);
+          this.documentoInput.nativeElement.value = this.identificacion;
         } else {
           //this.usuarioNoExisteModal();
         }
@@ -91,10 +117,16 @@ export class RegistrarUsuarioComponent {
     });
   }
 
+  usuarioNoExisteModal(): void {
+    this.dialog.open(UsuarioNoEncontradoComponent, {
+      width: '400px',
+    });
+  }
+
   printFormData(): void {
     if (this.printFormData) {
       console.log('Form Data:', this.printFormData);
-      alert(JSON.stringify(this.printFormData, null, 2)); 
+      alert(JSON.stringify(this.printFormData, null, 2));
     }
   }
 }

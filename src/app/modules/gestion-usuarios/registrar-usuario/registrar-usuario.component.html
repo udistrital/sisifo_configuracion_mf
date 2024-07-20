@@ -9,16 +9,16 @@
   <div class="inputs">
     <mat-form-field appearance="fill">
       <mat-label>Documento de identidad:</mat-label>
-      <input type="text" matInput #documento />
-      <button mat-icon-button matSuffix (click)="BuscarDocumento(documento.value)">
+      <input type="text" matInput #documentoInput />
+      <button mat-icon-button matSuffix (click)="BuscarDocumento(documentoInput.value)">
         <mat-icon>search</mat-icon>
       </button>
     </mat-form-field>
   
     <mat-form-field appearance="fill" class="correo">
       <mat-label>Correo:</mat-label>
-      <input type="text" matInput #correo />
-      <button mat-icon-button matSuffix (click)="BuscarCorreo(correo.value)">
+      <input type="text" matInput #emailInput />
+      <button mat-icon-button matSuffix (click)="BuscarCorreo(emailInput.value)">
         <mat-icon>search</mat-icon>
       </button>
     </mat-form-field>
