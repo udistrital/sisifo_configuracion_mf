@@ -40,12 +40,10 @@ export class RegistrarUsuarioComponent {
   }
 
   BuscarTercero(documento: string) {
-    console.log('Documento para tercero:', documento);
     this.terceros_service
       .get(`tercero/identificacion?query=${documento}`)
       .subscribe({
         next: (data: any) => {
-          console.log('Datos del tercero:', data);
           if (
             data &&
             data.length > 0 &&
@@ -53,13 +51,11 @@ export class RegistrarUsuarioComponent {
             data[0].Tercero.NombreCompleto
           ) {
             this.nombreCompleto = data[0].Tercero.NombreCompleto;
-            console.log('Nombre Completo:', this.nombreCompleto);
           } else {
             this.usuarioNoExisteModal();
           }
         },
         error: (err: any) => {
-          console.error('Error al consultar el documento:', err);
           this.usuarioNoExisteModal();
         },
       });
@@ -70,23 +66,21 @@ export class RegistrarUsuarioComponent {
       this.usuarioNoExisteModal();
       return;
     }
-    console.log('Documento:', documento);
+
     this.autenticacionService
       .getDocumento(`token/documentoToken`, documento)
       .subscribe({
         next: (data: any) => {
-          console.log('Datos del usuario:', data);
           if (data && data.documento) {
             this.identificacion = data.documento;
-            console.log('Identificacion:', this.identificacion);
+
             this.BuscarTercero(this.identificacion);
             this.emailInput.nativeElement.value = data.email;
           } else {
-            //this.usuarioNoExisteModal();
+            this.usuarioNoExisteModal();
           }
         },
         error: (err: any) => {
-          console.error('Error al consultar el documento:', err);
           this.usuarioNoExisteModal();
         },
       });
@@ -97,21 +91,19 @@ export class RegistrarUsuarioComponent {
       this.usuarioNoExisteModal();
       return;
     }
-    console.log('Correo:', correo);
+
     this.autenticacionService.getEmail(`token/userRol`, correo).subscribe({
       next: (data: any) => {
-        console.log('Datos del usuario:', data);
         if (data && data.documento) {
           this.identificacion = data.documento;
-          console.log('identificacion:', this.identificacion);
+
           this.BuscarTercero(this.identificacion);
           this.documentoInput.nativeElement.value = this.identificacion;
         } else {
-          //this.usuarioNoExisteModal();
+          this.usuarioNoExisteModal();
         }
       },
       error: (err: any) => {
-        console.error('Error al consultar el correo:', err);
         this.usuarioNoExisteModal();
       },
     });
