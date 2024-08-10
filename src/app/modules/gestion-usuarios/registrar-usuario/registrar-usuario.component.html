@@ -34,7 +34,7 @@
   <div class="Rol">
     <mat-form-field class="rol-width">
       <mat-label >Rol:</mat-label>
-        <mat-select  >
+        <mat-select #rolInput >
             <mat-option  mat-option *ngFor="let rol of roles" [value]="rol.Id">
                 {{ rol.Nombre }}
             </mat-option>
@@ -45,14 +45,14 @@
   <div class="fechas">
     <mat-form-field >
         <mat-label>Fecha Inicial Rol:</mat-label>
-        <input matInput [matDatepicker]="picker1">
+        <input matInput [matDatepicker]="picker1" [(ngModel)]="fechaInicioValue">
         <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
         <mat-datepicker #picker1></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field >
         <mat-label>Fecha Final Rol:</mat-label>
-        <input matInput [matDatepicker]="picker2">
+        <input matInput [matDatepicker]="picker2" [(ngModel)]="fechaFinValue">
         <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
         <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
@@ -61,6 +61,6 @@
 
   <div class="button-container">
     <button mat-raised-button class="Bcancelar" >Cancelar</button>
-    <button mat-raised-button color="primary" (click)="printFormData()">Guardar</button>
+    <button mat-raised-button color="primary" (click)="crearUsuario(documentoInput.value, fechaInicioValue, fechaFinValue, rolInput.value, emailInput.value)">Guardar</button>
   </div>
 </div>

@@ -1,3 +1,7 @@
+import {
+  Usuario,
+  Rol,
+} from './../../gestion-roles/utils/gestion-usuarios.models';
 import { AutenticacionService } from './../../../services/autenticacion.service';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,18 +27,83 @@ export class RegistrarUsuarioComponent {
   roles: RolRegistro[] = [];
   nombreCompleto: string = '';
   identificacion: string = '';
-  fechaInicioValue = ' ';
-  fechaFinValue = ' ';
+  fechaInicioValue!: Date;
+  fechaFinValue!: Date;
 
   constructor(
     private historico_service: HistoricoUsuariosMidService,
     private terceros_service: TercerosService,
     private autenticacionService: AutenticacionService,
     private dialog: MatDialog
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.obtenerRoles();
+  }
+  obtenerRoles(): void {
     this.historico_service.get('roles/').subscribe({
-      next: (data: any) => {
-        this.roles = data;
+      next: (response: any) => {
+        if (response && Array.isArray(response.Data)) {
+          this.roles = response.Data;
+        } else {
+          console.error(
+            'La respuesta no contiene una propiedad Data que sea un array.'
+          );
+          this.roles = [];
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al obtener roles:', err);
+      },
+    });
+  }
+
+  crearUsuario(
+    documento: string,
+    fechaInicio: Date,
+    fechaFin: Date,
+    rolId: number,
+    email: string
+  ) {
+    const fechaInicioFormato = fechaInicio.toISOString().split('T')[0];
+    const fechaFinFormato = fechaFin.toISOString().split('T')[0];
+    const usuario = {
+      Documento: documento,
+    };
+    const nombreRol = this.roles.find((r) => r.Id === rolId)?.Nombre || '';
+
+    this.historico_service.post('usuarios/', usuario).subscribe({
+      next: (response: any) => {
+        const periodo = {
+          FechaFin: fechaFinFormato,
+          FechaInicio: fechaInicioFormato,
+          Finalizado: false,
+          RolId: { Id: rolId },
+          UsuarioId: { Id: response.Data.Id },
+        };
+        this.historico_service
+          .post('periodos-rol-usuarios/', periodo)
+          .subscribe({
+            next: (response: any) => {
+              console.log('Periodo creado:', response);
+            },
+            error: (err: any) => {
+              console.error('Error al crear periodo:', err);
+            },
+          });
+        this.autenticacionService
+          .PostAddRol('rol/add', nombreRol, email)
+          .subscribe({
+            next: (response: any) => {
+              console.log('Rol creado:', response);
+            },
+            error: (err: any) => {
+              console.error('Error al crear rol:', err);
+            },
+          });
+      },
+      error: (err: any) => {
+        console.error('Error al crear usuario:', err);
       },
     });
   }
@@ -113,12 +182,5 @@ export class RegistrarUsuarioComponent {
     this.dialog.open(UsuarioNoEncontradoComponent, {
       width: '400px',
     });
-  }
-
-  printFormData(): void {
-    if (this.printFormData) {
-      console.log('Form Data:', this.printFormData);
-      alert(JSON.stringify(this.printFormData, null, 2));
-    }
   }
 }

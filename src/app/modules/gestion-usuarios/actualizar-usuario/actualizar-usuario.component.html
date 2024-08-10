@@ -8,55 +8,46 @@
   <div class="inputs">
     <mat-form-field appearance="fill">
       <mat-label>Documento de identidad:</mat-label>
-      <input type="text" matInput #documento />
-      <button mat-icon-button matSuffix (click)="BuscarDocumento(documento.value)">
-        <mat-icon>search</mat-icon>
-      </button>
+      <input type="text" matInput #documentoInput readonly />
     </mat-form-field>
-  
+
     <mat-form-field appearance="fill" class="correo">
       <mat-label>Correo:</mat-label>
-      <input type="text" matInput #correo />
-      <button mat-icon-button matSuffix (click)="BuscarCorreo(correo.value)">
-        <mat-icon>search</mat-icon>
-      </button>
+      <input type="text" matInput #emailInput readonly />
     </mat-form-field>
   </div>
 
   <div class="nombre">
     <mat-form-field appearance="fill">
       <mat-label>Nombres y Apellidos:</mat-label>
-      <input type="text" matInput />
+      <input type="text" matInput [value]="nombreCompleto" readonly />
     </mat-form-field>
   </div>
 
   <div class="selector">
-    <mat-form-field class="rol">
-      <mat-label >Rol:</mat-label>
-        <mat-select  >
-            <mat-option  mat-option *ngFor="let rol of roles" [value]="rol.Id">
-                {{ rol.Nombre }}
-            </mat-option>
-        </mat-select>
+    <mat-form-field appearance="fill" class="rol">
+      <mat-label>Rol:</mat-label>
+      <input type="text" matInput readonly />
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Estado:</mat-label>
       <mat-select>
-        <mat-option *ngFor="let estado of estados"[value]="estado">
-            {{estado}}
+        <mat-option *ngFor="let estado of estados" [value]="estado">
+          {{ estado }}
         </mat-option>
-        </mat-select>
+      </mat-select>
     </mat-form-field>
   </div>
 
   <div class="fechas">
     <mat-form-field>
       <mat-label>Fecha Inicial Rol:</mat-label>
-      <input matInput [matDatepicker]="picker1" />
+      <input matInput [matDatepicker]="picker1" readonly />
       <mat-datepicker-toggle
         matIconSuffix
         [for]="picker1"
+        disabled
       ></mat-datepicker-toggle>
       <mat-datepicker #picker1></mat-datepicker>
     </mat-form-field>
