@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { GestionRolesRoutingModule } from './gestion-roles-routing.module';
-import { UsuariosComponent } from './usuarios/usuarios.component';
+import { UsuariosComponent } from '../gestion-usuarios/consulta-usuarios/consulta-usuarios.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormRolesComponent } from './form-roles/form-roles.component'
 import { HttpClientModule,  provideHttpClient } from '@angular/common/http';
