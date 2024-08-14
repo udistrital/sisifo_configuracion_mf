@@ -122,7 +122,7 @@
 			  <ng-container matColumnDef="acciones">
 				<mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
 				<mat-cell *matCellDef="let element">
-				  <button mat-icon-button color="primary" (click)="edit(element.documento)">
+				  <button mat-icon-button color="primary" (click)="edit(element.documento, element.id_periodo)">
 					<mat-icon>edit</mat-icon>
 				  </button>
 				  <button mat-icon-button color="warn" (click)="delete(element)">

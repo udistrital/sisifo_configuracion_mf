@@ -31,7 +31,7 @@ export class AutenticacionService {
     return this.requestManager.get(endpoint);
   }
 
-  PostAddRol(endpoint: any, rol: string, user: string): any {
+  PostRol(endpoint: any, rol: string, user: string): any {
   this.requestManager.setPath('AUTENTICACION');
   console.log("path:", this.requestManager);
   const payload = { rol: rol, user: user };

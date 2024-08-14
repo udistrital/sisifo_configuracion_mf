@@ -92,7 +92,7 @@ export class RegistrarUsuarioComponent {
             },
           });
         this.autenticacionService
-          .PostAddRol('rol/add', nombreRol, email)
+          .PostRol('rol/add', nombreRol, email)
           .subscribe({
             next: (response: any) => {
               console.log('Rol creado:', response);

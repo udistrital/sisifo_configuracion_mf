@@ -27,12 +27,12 @@
   <div class="selector">
     <mat-form-field appearance="fill" class="rol">
       <mat-label>Rol:</mat-label>
-      <input type="text" matInput readonly />
+      <input type="text" matInput #rolInput readonly />
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Estado:</mat-label>
-      <mat-select>
+      <mat-select [(ngModel)]="estadoPeriodo">
         <mat-option *ngFor="let estado of estados" [value]="estado">
           {{ estado }}
         </mat-option>
@@ -43,7 +43,7 @@
   <div class="fechas">
     <mat-form-field>
       <mat-label>Fecha Inicial Rol:</mat-label>
-      <input matInput [matDatepicker]="picker1" readonly />
+      <input matInput [matDatepicker]="picker1" [(ngModel)]="fechaInicioRol" readonly />
       <mat-datepicker-toggle
         matIconSuffix
         [for]="picker1"
@@ -54,7 +54,7 @@
 
     <mat-form-field>
       <mat-label>Fecha Final Rol:</mat-label>
-      <input matInput [matDatepicker]="picker2" />
+      <input matInput [matDatepicker]="picker2" [(ngModel)]="fechaFinRol" />
       <mat-datepicker-toggle
         matIconSuffix
         [for]="picker2"
@@ -65,6 +65,6 @@
 
   <div class="button-container">
     <button mat-raised-button class="Bcancelar">Cancelar</button>
-    <button mat-raised-button color="primary">Guardar</button>
+    <button mat-raised-button color="primary" (click)="ActualizarPeriodo()">Guardar</button>
   </div>
 </div>
