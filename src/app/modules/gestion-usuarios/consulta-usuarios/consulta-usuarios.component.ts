@@ -144,8 +144,8 @@ export class UsuariosComponent implements OnInit {
   //   });
   // }
 
-  edit(documento: string) {
-    this.router.navigate(['/gestion-usuarios/actualizar-usuario'], { queryParams: { documento } });
+  edit(documento: string, id_periodo: number) {
+    this.router.navigate(['/gestion-usuarios/actualizar-usuario'], { queryParams: { documento, id_periodo } });
   }
 
   delete(element: UserData) {
