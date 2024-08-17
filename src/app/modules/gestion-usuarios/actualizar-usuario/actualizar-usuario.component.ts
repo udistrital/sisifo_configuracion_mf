@@ -24,6 +24,7 @@ export interface RolRegistro {
   styleUrls: ['./actualizar-usuario.component.scss'],
 })
 export class ActualizarUsuarioComponent {
+  loading = false;
   @ViewChild('documentoInput') documentoInput!: ElementRef;
   @ViewChild('emailInput') emailInput!: ElementRef;
   @ViewChild('rolInput') rolInput!: ElementRef;
@@ -62,6 +63,7 @@ export class ActualizarUsuarioComponent {
   }
 
   BuscarTercero(documento: string) {
+    this.loading = true;
     this.terceros_service
       .get(`tercero/identificacion?query=${documento}`)
       .subscribe({
@@ -75,21 +77,23 @@ export class ActualizarUsuarioComponent {
             this.nombreCompleto = data[0].Tercero.NombreCompleto;
             this.cdr.detectChanges();
           } else {
-            this.usuarioNoExisteModal();
+            this.usuarioNoExisteModal('Usuario no encontrado.');
           }
+          this.loading = false;
         },
         error: (err: any) => {
-          this.usuarioNoExisteModal();
+          this.usuarioNoExisteModal('Error al buscar usuario.');
+          this.loading = false;
         },
       });
   }
 
   BuscarDocumento(documento: string, idPeriodo: number) {
     if (!documento) {
-      this.usuarioNoExisteModal();
+      this.usuarioNoExisteModal('Por favor, ingresa un documento válido.');
       return;
     }
-
+    this.loading = true;
     this.idPeriodo = idPeriodo;
 
     this.autenticacionService
@@ -104,16 +108,19 @@ export class ActualizarUsuarioComponent {
             this.cdr.detectChanges();
             this.InfoPeriodo(idPeriodo);
           } else {
-            this.usuarioNoExisteModal();
+            this.usuarioNoExisteModal('Usuario no encontrado.');
           }
+          this.loading = false
         },
         error: (err: any) => {
-          this.usuarioNoExisteModal();
+          this.usuarioNoExisteModal('Error al buscar el documento.');
+          this.loading = false
         },
       });
   }
 
   InfoPeriodo(idPeriodo: number) {
+    this.loading = true;
     this.historico_service.get(`periodos-rol-usuarios/${idPeriodo}`).subscribe({
       next: (data: any) => {
         this.idRol = data.Data.RolId.Id;
@@ -124,12 +131,19 @@ export class ActualizarUsuarioComponent {
         this.rolInput.nativeElement.value = this.nombreRol;
         this.email = this.emailInput?.nativeElement?.value || '';
         this.idPeriodo = idPeriodo;
+        this.loading = false;
       },
+      error: (err: any) => {
+        console.error('Error al cargar el periodo:', err);
+        this.usuarioNoExisteModal('Error al cargar el periodo.')
+        this.loading = false;
+      }
     });
   }
 
   ActualizarPeriodo() {
     if (this.estadoPeriodo === 'Finalizado') {
+      this.loading = true;
       this.autenticacionService
         .PostRol('rol/remove', this.nombreRol, this.email)
         .subscribe({
@@ -151,14 +165,19 @@ export class ActualizarUsuarioComponent {
               .subscribe({
                 next: (response: any) => {
                   console.log('Periodo actualizado:', response);
+                  this.loading = false;
                 },
                 error: (err: any) => {
                   console.error('Error al actualizar periodo:', err);
+                  this.usuarioNoExisteModal('Error al actualizar el periodo.');
+                  this.loading = false;
                 },
               });
           },
           error: (err: any) => {
             console.error('Error al eliminar rol:', err);
+            this.usuarioNoExisteModal('Error al eliminar el rol.');
+            this.loading = false;
           },
         });
     } else {
@@ -166,9 +185,10 @@ export class ActualizarUsuarioComponent {
     }
   }
 
-  usuarioNoExisteModal(): void {
+  usuarioNoExisteModal(mensaje:string): void {
     this.dialog.open(UsuarioNoEncontradoComponent, {
       width: '400px',
+      data: { mensaje: mensaje }
     });
   }
 

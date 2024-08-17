@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { GestionRolesRoutingModule } from './gestion-roles-routing.module';
-import { UsuariosComponent } from '../gestion-usuarios/consulta-usuarios/consulta-usuarios.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormRolesComponent } from './form-roles/form-roles.component'
 import { HttpClientModule,  provideHttpClient } from '@angular/common/http';
@@ -19,7 +18,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 @NgModule({
   declarations: [
-    UsuariosComponent,
     FormRolesComponent
   ],
   imports: [

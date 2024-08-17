@@ -15,19 +15,23 @@ import { MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { NgFor } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ActualizarUsuarioComponent } from './actualizar-usuario/actualizar-usuario.component';
+import { UsuariosComponent } from './consulta-usuarios/consulta-usuarios.component';
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { UsuarioNoEncontradoComponent } from './usuario-no-encontrado/usuario-no-encontrado.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
   declarations: [
     RegistrarUsuarioComponent,
     ActualizarUsuarioComponent,
-    UsuarioNoEncontradoComponent
+    UsuarioNoEncontradoComponent,
+    UsuariosComponent,
     ],
   imports: [
     CommonModule,
@@ -36,6 +40,7 @@ import { UsuarioNoEncontradoComponent } from './usuario-no-encontrado/usuario-no
     GestionUsuariosRoutingModule,
     HttpClientModule,
     MatInputModule,
+    MatTableModule,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
@@ -44,7 +49,8 @@ import { UsuarioNoEncontradoComponent } from './usuario-no-encontrado/usuario-no
     NgFor,
     MatCardModule,
     MatFormFieldModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule
   ],
   providers:[
     HistoricoUsuariosMidService,
