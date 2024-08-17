@@ -4,6 +4,15 @@
 <br />
 
 <div class="container-border">
+  <div *ngIf="loading" class="spinner-container">
+		<mat-progress-spinner
+		  class="spinner"
+		  [diameter]="50"
+		  [strokeWidth]="5"
+		  mode="indeterminate"
+		></mat-progress-spinner>
+	  </div>
+    
   <h2 class="titulo">Crear Usuario(a)</h2>
 
   <div class="inputs">

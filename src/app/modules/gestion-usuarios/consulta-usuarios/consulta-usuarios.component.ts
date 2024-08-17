@@ -34,6 +34,7 @@ interface ApiResponse {
   styleUrls: ['./consulta-usuarios.component.scss']
 })
 export class UsuariosComponent implements OnInit {
+  loading: boolean = false; 
   @ViewChild('documentoInput') documentoInput!: ElementRef;
   formUsuarios!: FormGroup;
   identificacion: string = '';
@@ -78,20 +79,24 @@ export class UsuariosComponent implements OnInit {
 
 
   PeriodosUsuario(limit: number, offset: number) {
+    this.loading = true;
     this.autenticacionService
     .getPeriodos(`rol/periods?limit=${limit}&offset=${offset}`)
     .subscribe({
       next: (response: ApiResponse) => {
+        this.loading = false;
         if (response.Success && response.Data && response.Data.length > 0) {
           this.dataSource.data = response.Data;
           this.cdr.detectChanges();
           console.log('data:', response.Data);
         } else {
-          this.usuarioNoExisteModal();
+
+          this.loading = false;
+          this.usuarioNoExisteModal('No se encontraron periodos.');
         }
       },
       error: (err: any) => {
-        this.usuarioNoExisteModal();
+        this.usuarioNoExisteModal('Ocurrió un error al intentar obtener los periodos. Inténtalo nuevamente.');  
       },
     });
 
@@ -99,25 +104,30 @@ export class UsuariosComponent implements OnInit {
 
   BuscarDocumento(documento: string) {
     if (!documento) {
-      this.usuarioNoExisteModal();
+      this.usuarioNoExisteModal('Por favor, ingresa un documento válido.');
+      console.log('no hay documento:');
       return;
     }
+    this.loading = true;
     console.log('documento:', documento);
 
     this.autenticacionService
     .getPeriodos(`rol/user/${documento}/periods`)
     .subscribe({
       next: (response: ApiResponse) => {
+        this.loading = false;
         if (response.Success && response.Data && response.Data.length > 0) {
           this.dataSource.data = response.Data;
           this.cdr.detectChanges();
           console.log('data:', response.Data);
-        } else {
-          this.usuarioNoExisteModal();
+        } else {  
+          this.usuarioNoExisteModal(`No se encontraron periodos para el documento ingresado.`);
         }
       },
       error: (err: any) => {
-        this.usuarioNoExisteModal();
+        this.loading = false;
+        this.usuarioNoExisteModal(
+          `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`);
       },
     });
   }
@@ -177,9 +187,11 @@ export class UsuariosComponent implements OnInit {
     return currentFilter.state || '';
   }
 
-  usuarioNoExisteModal(): void {
+  usuarioNoExisteModal(mensaje: string): void {
+    console.log('Mostrando modal con mensaje:', mensaje);
     this.dialog.open(UsuarioNoEncontradoComponent, {
       width: '400px',
+      data: { mensaje: mensaje }
     });
   }
 

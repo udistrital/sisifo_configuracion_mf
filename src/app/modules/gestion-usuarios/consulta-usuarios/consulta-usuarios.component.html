@@ -1,5 +1,14 @@
-
 <mat-card [style.width.%]="100">
+
+	<div *ngIf="loading" class="spinner-container">
+		<mat-progress-spinner
+		  class="spinner"
+		  [diameter]="50"
+		  [strokeWidth]="5"
+		  mode="indeterminate"
+		></mat-progress-spinner>
+	  </div>
+
 	<mat-card-header class="title-top">
 
 		<mat-card-title class="bold"> <mat-icon color="primary" aria-hidden="false" aria-label="Settings icon"
