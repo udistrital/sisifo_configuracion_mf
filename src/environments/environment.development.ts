@@ -1,5 +1,6 @@
 export const environment = {
     production: false,
+    SISTEMA_INFORMACION: 1,
     AUTENTICACION_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/',
     TOKEN: {
       AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",

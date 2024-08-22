@@ -5,6 +5,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { AutenticacionService } from 'src/app/services/autenticacion.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
+import { environment } from 'src/environments/environment';
 
 import { UsuarioNoEncontradoComponent } from '../usuario-no-encontrado/usuario-no-encontrado.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -41,6 +42,7 @@ export class UsuariosComponent implements OnInit {
   nombreCompleto: string = '';
   displayedColumns: string[] = ['nombre', 'documento', 'correo', 'rolUsuario', 'estado', 'fechaInicial', 'fechaFinal', 'finalizado', 'acciones'];
   dataSource = new MatTableDataSource<UserData>([  ]);
+  sistemaInformacion!: number;
 
   roles: string[] = ['Administrador', 'Usuario Estándar'];
   
@@ -63,7 +65,8 @@ export class UsuariosComponent implements OnInit {
       console.log('Formulario actualizado:', value);
     });
 
-    this.PeriodosUsuario(10, 0);
+   this.sistemaInformacion = environment.SISTEMA_INFORMACION;
+    this.PeriodosUsuario(this.sistemaInformacion, 10, 0);
 
     // Inicializamos el filtro con funciones predicadas personalizadas
     //this.dataSource.filterPredicate = this.customFilterPredicate();
@@ -78,10 +81,10 @@ export class UsuariosComponent implements OnInit {
   }
 
 
-  PeriodosUsuario(limit: number, offset: number) {
+  PeriodosUsuario(sistema : number, limit: number, offset: number) {
     this.loading = true;
     this.autenticacionService
-    .getPeriodos(`rol/periods?limit=${limit}&offset=${offset}`)
+    .getPeriodos(`rol/periods?sistema=${sistema}&limit=${limit}&offset=${offset}`)
     .subscribe({
       next: (response: ApiResponse) => {
         this.loading = false;
@@ -110,9 +113,9 @@ export class UsuariosComponent implements OnInit {
     }
     this.loading = true;
     console.log('documento:', documento);
-
+    
     this.autenticacionService
-    .getPeriodos(`rol/user/${documento}/periods`)
+    .getPeriodos(`rol/user/${documento}/periods?sistema=${this.sistemaInformacion}`)
     .subscribe({
       next: (response: ApiResponse) => {
         this.loading = false;
