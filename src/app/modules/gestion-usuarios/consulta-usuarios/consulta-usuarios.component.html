@@ -33,7 +33,7 @@
 				<mat-form-field class="form" appearance="fill" [style.width.%]="100" [formGroup]="formUsuarios">
 					<mat-label class="label">Documento de identidad</mat-label>
 					<input class="input" matInput #documentoInput formControlName="documento" required>
-						<button mat-icon-button matSuffix (click)="BuscarDocumento(documentoInput.value)">
+						<button mat-icon-button matSuffix (click)="BuscarDocumento(documentoInput.value, 10, 0)">
 							<mat-icon>search</mat-icon>
 						</button>
 					<mat-error *ngIf="formUsuarios.get('documento')?.hasError('required')">
@@ -122,8 +122,8 @@
 				<mat-header-cell *matHeaderCellDef>Finalizado</mat-header-cell>
 				<mat-cell *matCellDef="let element"> {{ element.finalizado ? 'Finalizado' : 'Vigente' }} </mat-cell>
 				<mat-footer-cell *matFooterCellDef>
-				  <mat-form-field appearance="fill">
-				  </mat-form-field>
+				  <!-- <mat-form-field appearance="fill">
+				  </mat-form-field> -->
 				</mat-footer-cell>
 			  </ng-container>
 		  
@@ -146,6 +146,7 @@
 			  <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
 			  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 			</table>
+			<mat-paginator [pageSizeOptions]="[4, 6]" showFirstLastButtons></mat-paginator>
 		  </section>
 	</mat-card-content>
 </mat-card>

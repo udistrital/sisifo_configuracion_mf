@@ -24,6 +24,7 @@ import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios
 import { TercerosService } from 'src/app/services/terceros.service';
 import { UsuarioNoEncontradoComponent } from './usuario-no-encontrado/usuario-no-encontrado.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -50,7 +51,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatCardModule,
     MatFormFieldModule,
     MatDialogModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatPaginatorModule
   ],
   providers:[
     HistoricoUsuariosMidService,

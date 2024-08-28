@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@an
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { MatPaginator } from '@angular/material/paginator';
 import { AutenticacionService } from 'src/app/services/autenticacion.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
@@ -32,22 +33,33 @@ interface ApiResponse {
 @Component({
   selector: 'app-usuarios',
   templateUrl: './consulta-usuarios.component.html',
-  styleUrls: ['./consulta-usuarios.component.scss']
+  styleUrls: ['./consulta-usuarios.component.scss'],
 })
 export class UsuariosComponent implements OnInit {
-  loading: boolean = false; 
+  loading: boolean = false;
   @ViewChild('documentoInput') documentoInput!: ElementRef;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   formUsuarios!: FormGroup;
   identificacion: string = '';
   nombreCompleto: string = '';
-  displayedColumns: string[] = ['nombre', 'documento', 'correo', 'rolUsuario', 'estado', 'fechaInicial', 'fechaFinal', 'finalizado', 'acciones'];
-  dataSource = new MatTableDataSource<UserData>([  ]);
+  displayedColumns: string[] = [
+    'nombre',
+    'documento',
+    'correo',
+    'rolUsuario',
+    'estado',
+    'fechaInicial',
+    'fechaFinal',
+    'finalizado',
+    'acciones',
+  ];
+  dataSource = new MatTableDataSource<UserData>([]);
   sistemaInformacion!: number;
 
   roles: string[] = ['Administrador', 'Usuario Estándar'];
-  
+
   constructor(
-    private fb: FormBuilder,    
+    private fb: FormBuilder,
     private terceros_service: TercerosService,
     private autenticacionService: AutenticacionService,
     private historico_service: HistoricoUsuariosMidService,
@@ -58,18 +70,29 @@ export class UsuariosComponent implements OnInit {
 
   ngOnInit() {
     this.formUsuarios = this.fb.group({
-      documento: ['', [Validators.required]]
+      documento: ['', [Validators.required]],
     });
 
-    this.formUsuarios.valueChanges.subscribe(value => {
+    this.formUsuarios.valueChanges.subscribe((value) => {
       console.log('Formulario actualizado:', value);
     });
 
-   this.sistemaInformacion = environment.SISTEMA_INFORMACION;
-    this.PeriodosUsuario(this.sistemaInformacion, 10, 0);
+    this.sistemaInformacion = environment.SISTEMA_INFORMACION_ID;
+    this.PeriodosUsuario(this.sistemaInformacion, 4, 0);
 
     // Inicializamos el filtro con funciones predicadas personalizadas
     //this.dataSource.filterPredicate = this.customFilterPredicate();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+
+    this.paginator.page.subscribe(() => {
+      //this.PeriodosUsuario(this.sistemaInformacion, 3, this.paginator.pageIndex * this.paginator.pageSize);
+      const limit = this.paginator.pageSize;
+      const offset = this.paginator.pageIndex * limit;
+      this.PeriodosUsuario(this.sistemaInformacion, limit, offset);
+    });
   }
 
   onSubmit() {
@@ -80,32 +103,33 @@ export class UsuariosComponent implements OnInit {
     }
   }
 
-
-  PeriodosUsuario(sistema : number, limit: number, offset: number) {
+  PeriodosUsuario(sistema: number, limit: number, offset: number) {
     this.loading = true;
     this.autenticacionService
-    .getPeriodos(`rol/periods?sistema=${sistema}&limit=${limit}&offset=${offset}`)
-    .subscribe({
-      next: (response: ApiResponse) => {
-        this.loading = false;
-        if (response.Success && response.Data && response.Data.length > 0) {
-          this.dataSource.data = response.Data;
-          this.cdr.detectChanges();
-          console.log('data:', response.Data);
-        } else {
-
+      .getPeriodos(
+        `rol/periods?query=sistema_informacion:${sistema}&limit=${limit}&offset=${offset}`
+      )
+      .subscribe({
+        next: (response: ApiResponse) => {
           this.loading = false;
-          this.usuarioNoExisteModal('No se encontraron periodos.');
-        }
-      },
-      error: (err: any) => {
-        this.usuarioNoExisteModal('Ocurrió un error al intentar obtener los periodos. Inténtalo nuevamente.');  
-      },
-    });
-
+          if (response.Success && response.Data && response.Data.length > 0) {
+            this.dataSource.data = response.Data;
+            this.cdr.detectChanges();
+            console.log('data:', response.Data);
+          } else {
+            this.loading = false;
+            this.usuarioNoExisteModal('No se encontraron periodos.');
+          }
+        },
+        error: (err: any) => {
+          this.usuarioNoExisteModal(
+            'Ocurrió un error al intentar obtener los periodos. Inténtalo nuevamente.'
+          );
+        },
+      });
   }
 
-  BuscarDocumento(documento: string) {
+  BuscarDocumento(documento: string, limit: number, offset: number) {
     if (!documento) {
       this.usuarioNoExisteModal('Por favor, ingresa un documento válido.');
       console.log('no hay documento:');
@@ -113,26 +137,31 @@ export class UsuariosComponent implements OnInit {
     }
     this.loading = true;
     console.log('documento:', documento);
-    
+
     this.autenticacionService
-    .getPeriodos(`rol/user/${documento}/periods?sistema=${this.sistemaInformacion}`)
-    .subscribe({
-      next: (response: ApiResponse) => {
-        this.loading = false;
-        if (response.Success && response.Data && response.Data.length > 0) {
-          this.dataSource.data = response.Data;
-          this.cdr.detectChanges();
-          console.log('data:', response.Data);
-        } else {  
-          this.usuarioNoExisteModal(`No se encontraron periodos para el documento ingresado.`);
-        }
-      },
-      error: (err: any) => {
-        this.loading = false;
-        this.usuarioNoExisteModal(
-          `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`);
-      },
-    });
+      .getPeriodos(
+        `rol/user/${documento}/periods?query=sistema_informacion:${this.sistemaInformacion}&limit=${limit}&offset=${offset}`
+      )
+      .subscribe({
+        next: (response: ApiResponse) => {
+          this.loading = false;
+          if (response.Success && response.Data && response.Data.length > 0) {
+            this.dataSource.data = response.Data;
+            this.cdr.detectChanges();
+            console.log('data:', response.Data);
+          } else {
+            this.usuarioNoExisteModal(
+              `No se encontraron periodos para el documento ingresado.`
+            );
+          }
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.usuarioNoExisteModal(
+            `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`
+          );
+        },
+      });
   }
   // BuscarCorreo(correo: string) {
   //   if (!correo) {
@@ -158,7 +187,9 @@ export class UsuariosComponent implements OnInit {
   // }
 
   edit(documento: string, id_periodo: number) {
-    this.router.navigate(['/gestion-usuarios/actualizar-usuario'], { queryParams: { documento, id_periodo } });
+    this.router.navigate(['/gestion-usuarios/actualizar-usuario'], {
+      queryParams: { documento, id_periodo },
+    });
   }
 
   delete(element: UserData) {
@@ -172,21 +203,31 @@ export class UsuariosComponent implements OnInit {
 
   applyRoleFilter(event: MatSelectChange) {
     const filterValue = event.value === 'all' ? '' : event.value;
-    this.dataSource.filter = JSON.stringify({ role: filterValue, state: this.currentStateFilter });
+    this.dataSource.filter = JSON.stringify({
+      role: filterValue,
+      state: this.currentStateFilter,
+    });
   }
 
   applyStateFilter(event: MatSelectChange) {
     const filterValue = event.value === 'all' ? '' : event.value.toString();
-    this.dataSource.filter = JSON.stringify({ role: this.currentRoleFilter, state: filterValue });
+    this.dataSource.filter = JSON.stringify({
+      role: this.currentRoleFilter,
+      state: filterValue,
+    });
   }
 
   get currentRoleFilter() {
-    const currentFilter = this.dataSource.filter ? JSON.parse(this.dataSource.filter) : {};
+    const currentFilter = this.dataSource.filter
+      ? JSON.parse(this.dataSource.filter)
+      : {};
     return currentFilter.role || '';
   }
 
   get currentStateFilter() {
-    const currentFilter = this.dataSource.filter ? JSON.parse(this.dataSource.filter) : {};
+    const currentFilter = this.dataSource.filter
+      ? JSON.parse(this.dataSource.filter)
+      : {};
     return currentFilter.state || '';
   }
 
@@ -194,7 +235,7 @@ export class UsuariosComponent implements OnInit {
     console.log('Mostrando modal con mensaje:', mensaje);
     this.dialog.open(UsuarioNoEncontradoComponent, {
       width: '400px',
-      data: { mensaje: mensaje }
+      data: { mensaje: mensaje },
     });
   }
 
