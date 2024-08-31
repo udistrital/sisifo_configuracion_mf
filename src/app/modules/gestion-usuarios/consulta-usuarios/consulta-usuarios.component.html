@@ -33,7 +33,7 @@
 				<mat-form-field class="form" appearance="fill" [style.width.%]="100" [formGroup]="formUsuarios">
 					<mat-label class="label">Documento de identidad</mat-label>
 					<input class="input" matInput #documentoInput formControlName="documento" required>
-						<button mat-icon-button matSuffix (click)="BuscarDocumento(documentoInput.value, 10, 0)">
+						<button mat-icon-button matSuffix (click)="IniciarPaginacion(); BuscarDocumento(documentoInput.value, 2, 0)">
 							<mat-icon>search</mat-icon>
 						</button>
 					<mat-error *ngIf="formUsuarios.get('documento')?.hasError('required')">
@@ -146,7 +146,7 @@
 			  <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
 			  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 			</table>
-			<mat-paginator [pageSizeOptions]="[4, 6]" showFirstLastButtons></mat-paginator>
+			<mat-paginator [pageSizeOptions]="[2, 6]" [length]="total" showFirstLastButtons></mat-paginator>
 		  </section>
 	</mat-card-content>
 </mat-card>
