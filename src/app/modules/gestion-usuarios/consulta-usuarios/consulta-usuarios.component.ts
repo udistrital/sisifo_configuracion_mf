@@ -55,6 +55,7 @@ export class UsuariosComponent implements OnInit {
   ];
   dataSource = new MatTableDataSource<UserData>([]);
   sistemaInformacion!: number;
+  total!: number;
 
   roles: string[] = ['Administrador', 'Usuario Estándar'];
 
@@ -78,20 +79,22 @@ export class UsuariosComponent implements OnInit {
     });
 
     this.sistemaInformacion = environment.SISTEMA_INFORMACION_ID;
-    this.PeriodosUsuario(this.sistemaInformacion, 4, 0);
+    this.PeriodosUsuario(this.sistemaInformacion, 2, 0);
 
     // Inicializamos el filtro con funciones predicadas personalizadas
     //this.dataSource.filterPredicate = this.customFilterPredicate();
+
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-
-    this.paginator.page.subscribe(() => {
-      //this.PeriodosUsuario(this.sistemaInformacion, 3, this.paginator.pageIndex * this.paginator.pageSize);
+  ngAfterViewInit() {   
+    this.paginator.page.subscribe(() => {      
       const limit = this.paginator.pageSize;
       const offset = this.paginator.pageIndex * limit;
-      this.PeriodosUsuario(this.sistemaInformacion, limit, offset);
+      if (this.formUsuarios.get('documento')?.value) {
+        this.BuscarDocumento(this.formUsuarios.get('documento')?.value, limit, offset);
+      } else {
+        this.PeriodosUsuario(this.sistemaInformacion, limit, offset);
+      }
     });
   }
 
@@ -101,6 +104,10 @@ export class UsuariosComponent implements OnInit {
     } else {
       console.log('Formulario no válido');
     }
+  }
+
+  IniciarPaginacion() {
+    this.paginator.pageIndex = 0;
   }
 
   PeriodosUsuario(sistema: number, limit: number, offset: number) {
@@ -114,6 +121,7 @@ export class UsuariosComponent implements OnInit {
           this.loading = false;
           if (response.Success && response.Data && response.Data.length > 0) {
             this.dataSource.data = response.Data;
+            this.total = 7;
             this.cdr.detectChanges();
             console.log('data:', response.Data);
           } else {
@@ -136,7 +144,6 @@ export class UsuariosComponent implements OnInit {
       return;
     }
     this.loading = true;
-    console.log('documento:', documento);
 
     this.autenticacionService
       .getPeriodos(
@@ -147,6 +154,7 @@ export class UsuariosComponent implements OnInit {
           this.loading = false;
           if (response.Success && response.Data && response.Data.length > 0) {
             this.dataSource.data = response.Data;
+            this.total = 3;
             this.cdr.detectChanges();
             console.log('data:', response.Data);
           } else {
