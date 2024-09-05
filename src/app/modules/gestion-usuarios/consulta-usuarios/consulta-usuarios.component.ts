@@ -56,6 +56,7 @@ export class UsuariosComponent implements OnInit {
   dataSource = new MatTableDataSource<UserData>([]);
   sistemaInformacion!: number;
   total!: number;
+  opcionesPagina: number[] = [2, 4, 6];
 
   roles: string[] = ['Administrador', 'Usuario Estándar'];
 
@@ -79,7 +80,7 @@ export class UsuariosComponent implements OnInit {
     });
 
     this.sistemaInformacion = environment.SISTEMA_INFORMACION_ID;
-    this.PeriodosUsuario(this.sistemaInformacion, 2, 0);
+    this.PeriodosUsuario(this.sistemaInformacion, this.opcionesPagina[0], 0);
 
     // Inicializamos el filtro con funciones predicadas personalizadas
     //this.dataSource.filterPredicate = this.customFilterPredicate();
@@ -108,6 +109,7 @@ export class UsuariosComponent implements OnInit {
 
   IniciarPaginacion() {
     this.paginator.pageIndex = 0;
+    this.paginator.pageSize = this.opcionesPagina[0];
   }
 
   PeriodosUsuario(sistema: number, limit: number, offset: number) {
