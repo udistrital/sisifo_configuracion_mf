@@ -131,10 +131,10 @@
 			  <ng-container matColumnDef="acciones">
 				<mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
 				<mat-cell *matCellDef="let element">
-				  <button mat-icon-button color="primary" (click)="edit(element.documento, element.id_periodo)">
+				  <button mat-icon-button color="primary" *ngIf="permisoEdicion" (click)="edit(element.documento, element.id_periodo)">
 					<mat-icon>edit</mat-icon>
 				  </button>
-				  <button mat-icon-button color="warn" (click)="delete(element)">
+				  <button mat-icon-button color="warn" *ngIf="permisoEdicion" (click)="delete(element)">
 					<mat-icon>delete</mat-icon>
 				  </button>
 				</mat-cell>

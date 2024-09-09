@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 import { UsuarioNoEncontradoComponent } from '../usuario-no-encontrado/usuario-no-encontrado.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { ImplicitAutenticationService } from 'src/app/services/implicit-autentication.service';
 
 
 interface UserData {
@@ -57,6 +58,8 @@ export class UsuariosComponent implements OnInit {
   sistemaInformacion!: number;
   total!: number;
   opcionesPagina: number[] = [2, 4, 6];
+  permisoEdicion: boolean = false;
+  permisoConsulta: boolean = false;
 
   roles: string[] = ['Administrador', 'Usuario Estándar'];
 
@@ -67,10 +70,24 @@ export class UsuariosComponent implements OnInit {
     private historico_service: HistoricoUsuariosMidService,
     private dialog: MatDialog,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: ImplicitAutenticationService
   ) {}
 
   ngOnInit() {
+
+    this.authService.getRole().then(roles => {
+      this.permisoEdicion = this.authService.PermisoEdicion(roles);
+      console.log('Permiso de edición:', this.permisoEdicion);
+      this.permisoConsulta = this.authService.PermisoConsulta(roles);
+      console.log('Permiso de consulta:', this.permisoConsulta);
+      if (!this.permisoEdicion) {
+        this.displayedColumns = this.displayedColumns.filter(col => col !== 'acciones');
+      }
+    }).catch(error => {
+      console.error('Error al obtener los roles del usuario:', error);
+    });
+
     this.formUsuarios = this.fb.group({
       documento: ['', [Validators.required]],
     });

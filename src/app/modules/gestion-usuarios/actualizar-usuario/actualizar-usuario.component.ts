@@ -12,6 +12,7 @@ import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios
 import { TercerosService } from 'src/app/services/terceros.service';
 import { UsuarioNoEncontradoComponent } from '../usuario-no-encontrado/usuario-no-encontrado.component';
 import { ActivatedRoute } from '@angular/router';
+import { ImplicitAutenticationService } from 'src/app/services/implicit-autentication.service';
 
 export interface RolRegistro {
   Nombre: string;
@@ -40,6 +41,8 @@ export class ActualizarUsuarioComponent {
   idRol!: number;
   usuarioId!: number;
   estadoPeriodo: string = '';
+  permisoEdicion: boolean = false;
+  permisoConsulta: boolean = false;
 
   constructor(
     private historico_service: HistoricoUsuariosMidService,
@@ -47,7 +50,8 @@ export class ActualizarUsuarioComponent {
     private autenticacionService: AutenticacionService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: ImplicitAutenticationService
   ) {}
 
   ngAfterViewInit(): void {
@@ -59,6 +63,15 @@ export class ActualizarUsuarioComponent {
         this.BuscarDocumento(documento, id_periodo);
         this.cdr.detectChanges();
       }
+    });
+
+    this.authService.getRole().then(roles => {
+      this.permisoEdicion = this.authService.PermisoEdicion(roles);
+      console.log('Permiso de edición:', this.permisoEdicion);
+      this.permisoConsulta = this.authService.PermisoConsulta(roles);
+      console.log('Permiso de consulta:', this.permisoConsulta);
+    }).catch(error => {
+      console.error('Error al obtener los roles del usuario:', error);
     });
   }
 
