@@ -1,14 +1,9 @@
-import {
-  Usuario,
-  Rol,
-} from './../../gestion-roles/utils/gestion-usuarios.models';
 import { AutenticacionService } from './../../../services/autenticacion.service';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
-import { UsuarioNoEncontradoComponent } from '../usuario-no-encontrado/usuario-no-encontrado.component';
+import { ModalService } from 'src/app/services/modal.service';
 
 export interface RolRegistro {
   Nombre: string;
@@ -35,7 +30,8 @@ export class RegistrarUsuarioComponent {
     private historico_service: HistoricoUsuariosMidService,
     private terceros_service: TercerosService,
     private autenticacionService: AutenticacionService,
-    private dialog: MatDialog
+    private modalService: ModalService
+    
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +53,7 @@ export class RegistrarUsuarioComponent {
       },
       error: (err: any) => {
         console.error('Error al obtener roles:', err);
-        this.usuarioNoExisteModal('Error al obtener los roles. Por favor, intenta nuevamente.');
+        this.modalService.mostrarModal('Error al obtener los roles. Por favor, intenta nuevamente.', 'warning','error');
         this.loading = false;
       },
     });
@@ -95,7 +91,7 @@ export class RegistrarUsuarioComponent {
             },
             error: (err: any) => {
               console.error('Error al crear periodo:', err);
-              this.usuarioNoExisteModal('Error al crear el periodo para el usuario.');
+              this.modalService.mostrarModal('Error al crear el periodo para el usuario.', 'warning','error');
               this.loading = false;
             },
           });
@@ -104,16 +100,18 @@ export class RegistrarUsuarioComponent {
           .subscribe({
             next: (response: any) => {
               console.log('Rol creado:', response);
+              this.loading = false;
+              this.modalService.mostrarModal('Usuario, periodo y rol creados exitosamente.', 'success', 'Creado');
             },
             error: (err: any) => {
               console.error('Error al crear rol:', err);
-              this.usuarioNoExisteModal('Error al asignar el rol al usuario.');
+              this.modalService.mostrarModal('Error al asignar el rol al usuario.', 'warning','error');
             },
           });
       },
       error: (err: any) => {
         console.error('Error al crear usuario:', err);
-        this.usuarioNoExisteModal('Error al crear el usuario. Verifica los datos e intenta nuevamente.');
+        this.modalService.mostrarModal('Error al crear el usuario. Verifica los datos e intenta nuevamente.', 'warning','error');
         this.loading = false;
       },
     });
@@ -134,12 +132,12 @@ export class RegistrarUsuarioComponent {
             this.nombreCompleto = data[0].Tercero.NombreCompleto;
             this.loading = false;
           } else {
-            this.usuarioNoExisteModal('No se encontraron datos del usuario con el documento proporcionado.');
+            this.modalService.mostrarModal('No se encontraron datos del usuario con el documento proporcionado.', 'warning','error');
             this.loading = false;
           }
         },
         error: (err: any) => {
-          this.usuarioNoExisteModal('No se encontraron datos del usuario ingresado');
+          this.modalService.mostrarModal('No se encontraron datos del usuario ingresado', 'warning','error');
           this.loading = false;
         },
       });
@@ -147,7 +145,7 @@ export class RegistrarUsuarioComponent {
 
   BuscarDocumento(documento: string) {
     if (!documento) {
-      this.usuarioNoExisteModal('Por favor, ingresa un documento válido.');
+      this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning','error');
       return;
     }
     this.loading = true;
@@ -162,12 +160,12 @@ export class RegistrarUsuarioComponent {
             this.emailInput.nativeElement.value = data.email;
             this.loading = false;
           } else {
-            this.usuarioNoExisteModal('No se encontraron datos del documento proporcionado.');
+            this.modalService.mostrarModal('No se encontraron datos del documento proporcionado.', 'warning','error');
             this.loading = false;
           }
         },
         error: (err: any) => {
-          this.usuarioNoExisteModal('No se encontraron datos del usuario ingresado');
+          this.modalService.mostrarModal('No se encontraron datos del usuario ingresado', 'warning','error');
           this.loading = false;
         },
       });
@@ -175,7 +173,7 @@ export class RegistrarUsuarioComponent {
 
   BuscarCorreo(correo: string) {
     if (!correo) {
-      this.usuarioNoExisteModal('Por favor, ingresa un correo válido.');
+      this.modalService.mostrarModal('Por favor, ingresa un correo válido.', 'warning','error');
       return;
     }
     this.loading = true;
@@ -188,23 +186,15 @@ export class RegistrarUsuarioComponent {
           this.documentoInput.nativeElement.value = this.identificacion;
           this.loading = false;
         } else {
-          this.usuarioNoExisteModal('No se encontraron datos asociados al correo proporcionado.');
+          this.modalService.mostrarModal('No se encontraron datos asociados al correo proporcionado.', 'warning','error');
           this.loading = false;
         }
       },
       error: (err: any) => {
-        this.usuarioNoExisteModal('Error al buscar el correo. Verifica los datos e intenta nuevamente.');
+        this.modalService.mostrarModal('Error al buscar el correo. Verifica los datos e intenta nuevamente.', 'warning','error');
         this.loading = false;
       },
     });
   }
 
-  usuarioNoExisteModal( mensaje: string): void {
-    this.dialog.open(UsuarioNoEncontradoComponent, {
-      width: '400px',
-      data: {
-        mensaje: mensaje
-      }
-    });
-  }
 }

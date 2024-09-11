@@ -131,12 +131,17 @@
 			  <ng-container matColumnDef="acciones">
 				<mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
 				<mat-cell *matCellDef="let element">
-				  <button mat-icon-button color="primary" *ngIf="permisoEdicion" (click)="edit(element.documento, element.id_periodo)">
-					<mat-icon>edit</mat-icon>
-				  </button>
-				  <button mat-icon-button color="warn" *ngIf="permisoEdicion" (click)="delete(element)">
-					<mat-icon>delete</mat-icon>
-				  </button>
+					<button mat-icon-button [matMenuTriggerFor]= "menu">
+						<mat-icon>more_vert</mat-icon>
+					  </button>					
+					  <mat-menu #menu="matMenu">
+						<button mat-menu-item *ngIf="permisoEdicion" (click)="edit(element.documento, element.id_periodo)">
+						  <mat-icon color="primary" >edit</mat-icon>Editar</button>
+						<button mat-menu-item *ngIf="permisoEdicion" (click)="delete(element)">
+						  <mat-icon color="warn">delete</mat-icon>
+						  <span>Eliminar</span>
+						</button>
+					  </mat-menu>
 				</mat-cell>
 				<mat-footer-cell *matFooterCellDef> </mat-footer-cell>
 			  </ng-container>
