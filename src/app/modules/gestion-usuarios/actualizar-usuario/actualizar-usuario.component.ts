@@ -1,16 +1,9 @@
-import { Usuario } from './../../gestion-roles/utils/gestion-usuarios.models';
 import { AutenticacionService } from './../../../services/autenticacion.service';
-import {
-  Component,
-  ElementRef,
-  ViewChild,
-  ChangeDetectorRef,
-} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {Component,ElementRef,ViewChild,ChangeDetectorRef,} from '@angular/core';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
-import { UsuarioNoEncontradoComponent } from '../usuario-no-encontrado/usuario-no-encontrado.component';
+import { ModalService } from 'src/app/services/modal.service';
 import { ActivatedRoute } from '@angular/router';
 import { ImplicitAutenticationService } from 'src/app/services/implicit-autentication.service';
 
@@ -48,10 +41,10 @@ export class ActualizarUsuarioComponent {
     private historico_service: HistoricoUsuariosMidService,
     private terceros_service: TercerosService,
     private autenticacionService: AutenticacionService,
-    private dialog: MatDialog,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private authService: ImplicitAutenticationService
+    private changeDetector: ChangeDetectorRef,
+    private authService: ImplicitAutenticationService,
+    private modalService: ModalService
   ) {}
 
   ngAfterViewInit(): void {
@@ -61,18 +54,21 @@ export class ActualizarUsuarioComponent {
       if (documento && id_periodo) {
         this.documentoInput.nativeElement.value = documento;
         this.BuscarDocumento(documento, id_periodo);
-        this.cdr.detectChanges();
+        this.changeDetector.detectChanges();
       }
     });
 
-    this.authService.getRole().then(roles => {
-      this.permisoEdicion = this.authService.PermisoEdicion(roles);
-      console.log('Permiso de edición:', this.permisoEdicion);
-      this.permisoConsulta = this.authService.PermisoConsulta(roles);
-      console.log('Permiso de consulta:', this.permisoConsulta);
-    }).catch(error => {
-      console.error('Error al obtener los roles del usuario:', error);
-    });
+    this.authService
+      .getRole()
+      .then((roles) => {
+        this.permisoEdicion = this.authService.PermisoEdicion(roles);
+        console.log('Permiso de edición:', this.permisoEdicion);
+        this.permisoConsulta = this.authService.PermisoConsulta(roles);
+        console.log('Permiso de consulta:', this.permisoConsulta);
+      })
+      .catch((error) => {
+        console.error('Error al obtener los roles del usuario:', error);
+      });
   }
 
   BuscarTercero(documento: string) {
@@ -88,14 +84,14 @@ export class ActualizarUsuarioComponent {
             data[0].Tercero.NombreCompleto
           ) {
             this.nombreCompleto = data[0].Tercero.NombreCompleto;
-            this.cdr.detectChanges();
+            this.changeDetector.detectChanges();
           } else {
-            this.usuarioNoExisteModal('Usuario no encontrado.');
+            this.modalService.mostrarModal('Usuario no encontrado.','warning','error');
           }
           this.loading = false;
         },
         error: (err: any) => {
-          this.usuarioNoExisteModal('Error al buscar usuario.');
+          this.modalService.mostrarModal('Error al buscar usuario.','warning','error');
           this.loading = false;
         },
       });
@@ -103,7 +99,7 @@ export class ActualizarUsuarioComponent {
 
   BuscarDocumento(documento: string, idPeriodo: number) {
     if (!documento) {
-      this.usuarioNoExisteModal('Por favor, ingresa un documento válido.');
+      this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning','error' );
       return;
     }
     this.loading = true;
@@ -117,17 +113,16 @@ export class ActualizarUsuarioComponent {
             this.identificacion = data.documento;
             this.emailInput.nativeElement.value = data.email;
             this.BuscarTercero(this.identificacion);
-
-            this.cdr.detectChanges();
+            this.changeDetector.detectChanges();
             this.InfoPeriodo(idPeriodo);
           } else {
-            this.usuarioNoExisteModal('Usuario no encontrado.');
+            this.modalService.mostrarModal('Usuario no encontrado.','warning','error');
           }
-          this.loading = false
+          this.loading = false;
         },
         error: (err: any) => {
-          this.usuarioNoExisteModal('Error al buscar el documento.');
-          this.loading = false
+          this.modalService.mostrarModal('Error al buscar el documento.','warning','error');
+          this.loading = false;
         },
       });
   }
@@ -148,9 +143,9 @@ export class ActualizarUsuarioComponent {
       },
       error: (err: any) => {
         console.error('Error al cargar el periodo:', err);
-        this.usuarioNoExisteModal('Error al cargar el periodo.')
+        this.modalService.mostrarModal('Error al cargar el periodo.','warning','error');
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -179,30 +174,24 @@ export class ActualizarUsuarioComponent {
                 next: (response: any) => {
                   console.log('Periodo actualizado:', response);
                   this.loading = false;
+                  this.modalService.mostrarModal('Periodo actualizado exitosamente.','success','Actualizado');
                 },
                 error: (err: any) => {
                   console.error('Error al actualizar periodo:', err);
-                  this.usuarioNoExisteModal('Error al actualizar el periodo.');
+                  this.modalService.mostrarModal('Error al actualizar el periodo.','warning','error');
                   this.loading = false;
                 },
               });
           },
           error: (err: any) => {
             console.error('Error al eliminar rol:', err);
-            this.usuarioNoExisteModal('Error al eliminar el rol.');
+            this.modalService.mostrarModal('Error al eliminar el rol.','warning','error');
             this.loading = false;
           },
         });
     } else {
       console.log('El estado no es "Finalizado", no se realizan cambios.');
     }
-  }
-
-  usuarioNoExisteModal(mensaje:string): void {
-    this.dialog.open(UsuarioNoEncontradoComponent, {
-      width: '400px',
-      data: { mensaje: mensaje }
-    });
   }
 
   estados = ['Finalizado'];

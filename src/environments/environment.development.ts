@@ -2,7 +2,7 @@ export const environment = {
     production: false,
     SISTEMA_INFORMACION_ID: 1,
     ROLES_CONSULTA: ['JEFE_DEPENDENCIA', 'AUDITOR', 'EJECUTOR', 'ESTUDIANTE'],
-    ROLES_CONSULTA_EDICION: ['ADMIN_SISIFO', 'SOPORTE_OAS'],
+    ROLES_CONSULTA_EDICION: ['ADMIN_SISIFO', 'SOPORTE_OAS', 'ADMIN_SGA'],
     AUTENTICACION_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/',
     TOKEN: {
       AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",

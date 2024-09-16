@@ -7,9 +7,8 @@ import { AutenticacionService } from 'src/app/services/autenticacion.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { environment } from 'src/environments/environment';
+import { ModalService } from 'src/app/services/modal.service';
 
-import { UsuarioNoEncontradoComponent } from '../usuario-no-encontrado/usuario-no-encontrado.component';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ImplicitAutenticationService } from 'src/app/services/implicit-autentication.service';
 
@@ -28,6 +27,7 @@ interface ApiResponse {
   Success: boolean;
   Status: number;
   Message: string;
+  Metadata: any;
   Data: UserData[];
 }
 
@@ -68,10 +68,10 @@ export class UsuariosComponent implements OnInit {
     private terceros_service: TercerosService,
     private autenticacionService: AutenticacionService,
     private historico_service: HistoricoUsuariosMidService,
-    private dialog: MatDialog,
     private router: Router,
-    private cdr: ChangeDetectorRef,
-    private authService: ImplicitAutenticationService
+    private changeDetector: ChangeDetectorRef,
+    private authService: ImplicitAutenticationService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -140,17 +140,16 @@ export class UsuariosComponent implements OnInit {
           this.loading = false;
           if (response.Success && response.Data && response.Data.length > 0) {
             this.dataSource.data = response.Data;
-            this.total = 7;
-            this.cdr.detectChanges();
-            console.log('data:', response.Data);
+            this.total = response.Metadata.Count;
+            this.changeDetector.detectChanges();
           } else {
             this.loading = false;
-            this.usuarioNoExisteModal('No se encontraron periodos.');
+            this.modalService.mostrarModal('No se encontraron periodos.', 'warning','error');
           }
         },
         error: (err: any) => {
-          this.usuarioNoExisteModal(
-            'Ocurrió un error al intentar obtener los periodos. Inténtalo nuevamente.'
+          this.modalService.mostrarModal(
+            'Ocurrió un error al intentar obtener los periodos. Inténtalo nuevamente.', 'warning','error'
           );
         },
       });
@@ -158,8 +157,7 @@ export class UsuariosComponent implements OnInit {
 
   BuscarDocumento(documento: string, limit: number, offset: number) {
     if (!documento) {
-      this.usuarioNoExisteModal('Por favor, ingresa un documento válido.');
-      console.log('no hay documento:');
+      this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning', 'error');
       return;
     }
     this.loading = true;
@@ -173,26 +171,25 @@ export class UsuariosComponent implements OnInit {
           this.loading = false;
           if (response.Success && response.Data && response.Data.length > 0) {
             this.dataSource.data = response.Data;
-            this.total = 3;
-            this.cdr.detectChanges();
-            console.log('data:', response.Data);
+            this.total = response.Metadata.Count;
+            this.changeDetector.detectChanges();
           } else {
-            this.usuarioNoExisteModal(
-              `No se encontraron periodos para el documento ingresado.`
+            this.modalService.mostrarModal(
+              `No se encontraron periodos para el documento ingresado.`, 'warning','error'
             );
           }
         },
         error: (err: any) => {
           this.loading = false;
-          this.usuarioNoExisteModal(
-            `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`
+          this.modalService.mostrarModal(
+            `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`, 'warning','error'
           );
         },
       });
   }
   // BuscarCorreo(correo: string) {
   //   if (!correo) {
-  //     this.usuarioNoExisteModal();
+  //     this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning', 'error');
   //     return;
   //   }
 
@@ -204,11 +201,11 @@ export class UsuariosComponent implements OnInit {
   //         this.BuscarTercero(this.identificacion);
   //         this.documentoInput.nativeElement.value = this.identificacion;
   //       } else {
-  //         this.usuarioNoExisteModal();
+  //         this.modalService.mostrarModal();
   //       }
   //     },
   //     error: (err: any) => {
-  //       this.usuarioNoExisteModal();
+  //       this.modalService.mostrarModal();
   //     },
   //   });
   // }
@@ -256,14 +253,6 @@ export class UsuariosComponent implements OnInit {
       ? JSON.parse(this.dataSource.filter)
       : {};
     return currentFilter.state || '';
-  }
-
-  usuarioNoExisteModal(mensaje: string): void {
-    console.log('Mostrando modal con mensaje:', mensaje);
-    this.dialog.open(UsuarioNoEncontradoComponent, {
-      width: '400px',
-      data: { mensaje: mensaje },
-    });
   }
 
   // customFilterPredicate() {
