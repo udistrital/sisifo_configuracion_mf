@@ -210,14 +210,41 @@ export class UsuariosComponent implements OnInit {
   //   });
   // }
 
+  EliminarPeriodo(id_periodo: number) {
+    this.modalService.modalConfirmacion('El periodo del usuario será eliminado',
+       'warning',
+       '¿Deseas continuar?').then((result) => {
+      if (result.isConfirmed) {
+        this.loading = true;
+        console.log("Periodo: ", id_periodo)
+        this.historico_service.delete('periodos-rol-usuarios/', id_periodo).subscribe({
+          next: (data: any) => {
+            this.loading = false;
+            this.IniciarPaginacion();
+            this.PeriodosUsuario(this.sistemaInformacion, this.opcionesPagina[0], 0);
+            this.modalService.mostrarModal(
+              'El periodo del usuario ha sido eliminado.',
+              'success',
+              'Eliminado'
+            );
+          },
+          error: (err: any) => {
+            this.loading = false;
+            this.modalService.mostrarModal(
+              'Ocurrio un error al intentar eliminar el periodo del usuario. Intente nuevamente.',
+              'error',
+              'error'
+            );
+          },
+        })
+      }
+    })  
+  }
+
   edit(documento: string, id_periodo: number) {
     this.router.navigate(['/gestion-usuarios/actualizar-usuario'], {
       queryParams: { documento, id_periodo },
     });
-  }
-
-  delete(element: UserData) {
-    console.log('Delete', element);
   }
 
   applyDocumentFilter() {

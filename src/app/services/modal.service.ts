@@ -20,4 +20,20 @@ export class ModalService {
       confirmButtonColor: 'rgb(100, 21, 21)',
     });
   }
+
+  modalConfirmacion(
+    mensaje: string, 
+    icono: 'success' | 'error' | 'warning' | 'info', 
+    titulo: string): Promise<any> {
+    return Swal.fire({
+      title: titulo.toUpperCase(),
+      text: mensaje,
+      icon: icono,
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      confirmButtonColor: 'rgb(100, 21, 21)',
+      cancelButtonText: 'Cancelar',
+      cancelButtonColor: 'rgb(100, 21, 21)',
+    });  
+  }  
 }
