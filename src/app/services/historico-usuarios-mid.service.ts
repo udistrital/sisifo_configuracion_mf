@@ -23,4 +23,9 @@ export class HistoricoUsuariosMidService {
     return this.requestManager.put(endpoint, element);
   }
 
+  delete(endpoint: any, id: any): any {
+    this.requestManager.setPath('HISTORICO_USUARIOS_MID');
+    return this.requestManager.delete(endpoint, id);
+  }
+
 }
