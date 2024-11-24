@@ -1,4 +1,4 @@
-# auditoria_plan_mejoramiento_usuario_mf
+# Usuario Rol Microcliente
 
 Cliente para la gestión del usuario_mf, manejo de usuarios y control de roles, parte del sistema de auditoria (Sísifo). Este proyecto está desarrollado con Angular.
 
@@ -100,7 +100,7 @@ El Core contiene componentes generales que construyen el layout y administran as
    npm start
    ```
 
-### auditoria_plan_mejoramiento_usuario_mf
+### usuario_rol_mf
 
 Microcliente de gestion de usuarios
 
@@ -109,13 +109,13 @@ Microcliente de gestion de usuarios
 1. Clonar el repositorio:
 
    ```bash
-   git clone https://github.com/udistrital/auditoria_plan_mejoramiento_usuario_mf
+   git clone https://github.com/udistrital/usuario_rol_mf
    ```
 
 2. Acceder al directorio del repositorio clonado:
 
    ```bash
-   cd auditoria_plan_mejoramiento_usuario_mf
+   cd usuario_rol_mf
    ```
 
 3. Instalar las dependencias:
@@ -158,10 +158,10 @@ Con estos pasos, se tendrán las partes mínimas necesarias para ejecutar el pro
 | 
 ## Licencia
 
-[This file is part of auditoria_plan_mejoramiento_usuario_mf](LICENSE)
+[This file is part of usuario_rol_mf](LICENSE)
 
-auditoria_plan_mejoramiento_usuario_mf is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (atSara Sampaio your option) any later version.
+usuario_rol_mf is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (atSara Sampaio your option) any later version.
 
-auditoria_plan_mejoramiento_usuario_mf is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+usuario_rol_mf is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with auditoria_plan_mejoramiento_usuario_mf. If not, see https://www.gnu.org/licenses/.
+You should have received a copy of the GNU General Public License along with usuario_rol_mf. If not, see https://www.gnu.org/licenses/.
