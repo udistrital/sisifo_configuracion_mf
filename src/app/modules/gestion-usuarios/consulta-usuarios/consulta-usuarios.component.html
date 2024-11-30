@@ -1,159 +1,189 @@
-<mat-card [style.width.%]="100">
+<div *ngIf="loading" class="spinner-container">
+  <mat-progress-spinner
+    class="spinner"
+    [diameter]="50"
+    [strokeWidth]="5"
+    mode="indeterminate"
+  ></mat-progress-spinner>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-12 my-2">
+      <p>Gestión Usuarios / <b>Consultar Usuarios</b></p>
+    </div>
+  </div>
+  <mat-card class="p-3">
+    <mat-card-content>
+      <div class="d-flex justify-content-between my-2">
+        <h2 style="color: var(--md-primary-700)">Gestión de Usuarios</h2>
+      </div>
 
-	<div *ngIf="loading" class="spinner-container">
-		<mat-progress-spinner
-		  class="spinner"
-		  [diameter]="50"
-		  [strokeWidth]="5"
-		  mode="indeterminate"
-		></mat-progress-spinner>
-	  </div>
+      <div class="row">
+        <div class="col-12">
+          <div
+            class="d-flex justify-content-center align-items-center fondo-acento-50 mt-3 mb-3"
+          >
+            <mat-icon> info </mat-icon>
+            <p class="mx-2">
+              En esta sección usted podrá consultar los usuarios asociados al
+              sistema SISIFO, realizando la búsqueda por documento o correo.
+            </p>
+          </div>
+        </div>
+      </div>
 
-	<mat-card-header class="title-top">
-
-		<mat-card-title class="bold"> <mat-icon color="primary" aria-hidden="false" aria-label="Settings icon"
-				fontIcon="settings"></mat-icon> Gestión Usuarios >> Consultar Usuario</mat-card-title>
-	</mat-card-header>
-	<mat-card-content class="container-border">
-		<mat-card-content class="content-top">
-			<mat-card-header class="title">
-				<mat-card-title class="bold">Gestión de Usuarios</mat-card-title>
-			</mat-card-header>
-			<u class="textGuide">
-				En esta sección usted podrá consultar los usuarios asociados al sistema SISIFO, realizando la búsqueda
-				por documento o correo.
-			</u>
-		</mat-card-content>
-		
-		<mat-card-content>
-			<mat-card-content class="container-border_intern">
-				<mat-card-header class="title">
-					<mat-card-title class="bold">Búsqueda de usuarios</mat-card-title>
-				</mat-card-header>
-				<mat-form-field class="form" appearance="fill" [style.width.%]="100" [formGroup]="formUsuarios">
-					<mat-label class="label">Documento de identidad</mat-label>
-					<input class="input" matInput #documentoInput formControlName="documento" required>
-						<button mat-icon-button matSuffix (click)="IniciarPaginacion(); BuscarDocumento(documentoInput.value, opcionesPagina[0], 0)">
-							<mat-icon>search</mat-icon>
-						</button>
-					<mat-error *ngIf="formUsuarios.get('documento')?.hasError('required')">
-						El campo es obligatorio.
-					</mat-error>
-					<!-- <mat-error *ngIf="formUsuarios.get('correo')?.hasError('pattern')">
+      <div class="row">
+        <mat-form-field
+          class="form"
+          appearance="outline"
+          [formGroup]="formUsuarios"
+          class="col-12 col-md-6 col-lg-4"
+        >
+          <mat-label class="label">Documento de identidad</mat-label>
+          <mat-icon matPrefix color="primary">badge</mat-icon>
+          <input
+            class="input"
+            matInput
+            #documentoInput
+            formControlName="documento"
+            required
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="
+              IniciarPaginacion();
+              BuscarDocumento(documentoInput.value, opcionesPagina[0], 0)
+            "
+          >
+            <mat-icon color="primary">search</mat-icon>
+          </button>
+          <mat-error
+            *ngIf="formUsuarios.get('documento')?.hasError('required')"
+          >
+            El campo es obligatorio.
+          </mat-error>
+          <!-- <mat-error *ngIf="formUsuarios.get('correo')?.hasError('pattern')">
 						Por favor, introduce un correo electrónico o un documento válido.
 					</mat-error> -->
-				</mat-form-field>
-			</mat-card-content>
-		</mat-card-content>
-	</mat-card-content>
-	<mat-card-content>
-		<section class="section">
-			<table mat-table [dataSource]="dataSource">
-			  <!-- Nombre Column -->
-			  <ng-container matColumnDef="nombre">
-				<mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.nombre }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef> </mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Documento Column -->
-			  <ng-container matColumnDef="documento">
-				<mat-header-cell *matHeaderCellDef>Documento</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.documento }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef>
-				  <button mat-icon-button color="primary" (click)="applyDocumentFilter()">
-					<mat-icon>search</mat-icon>
-				  </button>
-				</mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Correo Column -->
-			  <ng-container matColumnDef="correo">
-				<mat-header-cell *matHeaderCellDef>Correo</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.correo }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef> </mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Rol Usuario Column -->
-			  <ng-container matColumnDef="rolUsuario">
-				<mat-header-cell *matHeaderCellDef>Rol Usuario</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.rol_usuario }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef>
-				  <mat-form-field appearance="fill">
-					<mat-select (selectionChange)="applyRoleFilter($event)">
-					  <mat-option [value]="'all'">Todos</mat-option>
-					  <mat-option *ngFor="let role of roles" [value]="role">{{ role }}</mat-option>
-					</mat-select>
-				  </mat-form-field>
-				</mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Estado Column -->
-			  <ng-container matColumnDef="estado">
-				<mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.estado ? 'Activo' : 'Inactivo' }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef>
-				  <mat-form-field appearance="fill">
-					<mat-select (selectionChange)="applyStateFilter($event)">
-					  <mat-option [value]="'all'">Todos</mat-option>
-					  <mat-option [value]="true">Activo</mat-option>
-					  <mat-option [value]="false">Inactivo</mat-option>
-					</mat-select>
-				  </mat-form-field>
-				</mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Fecha Inicial Column -->
-			  <ng-container matColumnDef="fechaInicial">
-				<mat-header-cell *matHeaderCellDef>Fecha Inicial</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.fecha_inicial | date: 'shortDate' }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef> </mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Fecha Final Column -->
-			  <ng-container matColumnDef="fechaFinal">
-				<mat-header-cell *matHeaderCellDef>Fecha Final</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.fecha_final | date: 'shortDate' }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef> </mat-footer-cell>
-			  </ng-container>
+        </mat-form-field>
+      </div>
 
-			  <!-- Finalizado Column -->
-			  <ng-container matColumnDef="finalizado">
-				<mat-header-cell *matHeaderCellDef>Finalizado</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{ element.finalizado ? 'Finalizado' : 'Vigente' }} </mat-cell>
-				<mat-footer-cell *matFooterCellDef>
-				  <!-- <mat-form-field appearance="fill">
-				  </mat-form-field> -->
-				</mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Acciones Column -->
-			  <ng-container matColumnDef="acciones">
-				<mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
-				<mat-cell *matCellDef="let element">
-					<ng-container *ngIf="element.estado">
-					<button mat-icon-button [matMenuTriggerFor]= "menu">
-						<mat-icon>more_vert</mat-icon>
-					  </button>					
-					  <mat-menu #menu="matMenu">
-						<button mat-menu-item *ngIf="permisoEdicion" (click)="edit(element.documento, element.id_periodo)">
-						  <mat-icon color="primary" >edit</mat-icon>Editar</button>
-						<button mat-menu-item *ngIf="permisoEdicion" (click)= "EliminarPeriodo(element.id_periodo)">
-						  <mat-icon color="warn">delete</mat-icon>
-						  <span>Eliminar</span>
-						</button>
-					  </mat-menu>
-					</ng-container>
-				</mat-cell>
-				<mat-footer-cell *matFooterCellDef> </mat-footer-cell>
-			  </ng-container>
-		  
-			  <!-- Definir las filas y columnas a mostrar -->
-			  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-			  <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-			  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-			</table>
-			<mat-paginator [pageSizeOptions]="opcionesPagina" [length]="total" showFirstLastButtons></mat-paginator>
-		  </section>
-	</mat-card-content>
-</mat-card>
+      <div class="row">
+        <div class="col-12">
+          <div class="table-container">
+            <table mat-table [dataSource]="dataSource">
+              <!-- Nombre Column -->
+              <ng-container matColumnDef="nombre">
+                <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.nombre }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Documento Column -->
+              <ng-container matColumnDef="documento">
+                <mat-header-cell *matHeaderCellDef>Documento</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.documento }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Correo Column -->
+              <ng-container matColumnDef="correo">
+                <mat-header-cell *matHeaderCellDef>Correo</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.correo }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Rol Usuario Column -->
+              <ng-container matColumnDef="rolUsuario">
+                <mat-header-cell *matHeaderCellDef>Rol Usuario</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.rol_usuario }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Estado Column -->
+              <ng-container matColumnDef="estado">
+                <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.estado ? "Activo" : "Inactivo" }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Fecha Inicial Column -->
+              <ng-container matColumnDef="fechaInicial">
+                <mat-header-cell *matHeaderCellDef
+                  >Fecha Inicial</mat-header-cell
+                >
+                <mat-cell *matCellDef="let element">
+                  {{ element.fecha_inicial | date : "shortDate" }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Fecha Final Column -->
+              <ng-container matColumnDef="fechaFinal">
+                <mat-header-cell *matHeaderCellDef>Fecha Final</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.fecha_final | date : "shortDate" }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Finalizado Column -->
+              <ng-container matColumnDef="finalizado">
+                <mat-header-cell *matHeaderCellDef>Finalizado</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.finalizado ? "Finalizado" : "Vigente" }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Acciones Column -->
+              <ng-container matColumnDef="acciones">
+                <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  <ng-container *ngIf="element.estado">
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button
+                        mat-menu-item
+                        *ngIf="permisoEdicion"
+                        (click)="edit(element.documento, element.id_periodo)"
+                      >
+                        <mat-icon color="primary">edit</mat-icon>Editar
+                      </button>
+                      <button
+                        mat-menu-item
+                        *ngIf="permisoEdicion"
+                        (click)="EliminarPeriodo(element.id_periodo)"
+                      >
+                        <mat-icon color="warn">delete</mat-icon>
+                        <span>Eliminar</span>
+                      </button>
+                    </mat-menu>
+                  </ng-container>
+                </mat-cell>
+              </ng-container>
+
+              <!-- Definir las filas y columnas a mostrar -->
+              <mat-header-row
+                *matHeaderRowDef="displayedColumns"
+              ></mat-header-row>
+              <mat-row
+                *matRowDef="let row; columns: displayedColumns"
+              ></mat-row>
+            </table>
+          </div>
+          <mat-paginator
+            [pageSizeOptions]="opcionesPagina"
+            [length]="total"
+            showFirstLastButtons
+          ></mat-paginator>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
