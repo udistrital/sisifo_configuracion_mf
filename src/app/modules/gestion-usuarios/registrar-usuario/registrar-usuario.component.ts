@@ -1,3 +1,4 @@
+import { Rol, Usuario } from './../../gestion-roles/utils/gestion-usuarios.models';
 import { AutenticacionService } from './../../../services/autenticacion.service';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
@@ -31,7 +32,6 @@ export class RegistrarUsuarioComponent {
     private terceros_service: TercerosService,
     private autenticacionService: AutenticacionService,
     private modalService: ModalService
-    
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +44,7 @@ export class RegistrarUsuarioComponent {
         if (response && Array.isArray(response.Data)) {
           this.roles = response.Data;
         } else {
-          console.error( 
+          console.error(
             'La respuesta no contiene una propiedad Data que sea un array.'
           );
           this.roles = [];
@@ -53,7 +53,11 @@ export class RegistrarUsuarioComponent {
       },
       error: (err: any) => {
         console.error('Error al obtener roles:', err);
-        this.modalService.mostrarModal('Error al obtener los roles. Por favor, intenta nuevamente.', 'warning','error');
+        this.modalService.mostrarModal(
+          'Error al obtener los roles. Por favor, intenta nuevamente.',
+          'warning',
+          'error'
+        );
         this.loading = false;
       },
     });
@@ -66,55 +70,145 @@ export class RegistrarUsuarioComponent {
     rolId: number,
     email: string
   ) {
-    const fechaInicioFormato = fechaInicio.toISOString().split('T')[0];
-    const fechaFinFormato = fechaFin.toISOString().split('T')[0];
-    const usuario = {
-      Documento: documento,
-    };
-    const nombreRol = this.roles.find((r) => r.Id === rolId)?.Nombre || '';
     this.loading = true;
+  
+    const fechaInicioFormato = this.formatDate(fechaInicio);
+    const fechaFinFormato = this.formatDate(fechaFin);
+    const usuario = { Documento: documento };
+    const nombreRol = this.roles.find((r) => r.Id === rolId)?.Nombre || '';
+  
+    this.historico_service.get(`usuarios?query=documento:${documento}`).subscribe({
+      next: (response: any) => {
+        if (response?.Data?.length > 0) {
+          const usuarioExistente = response.Data[0];
+          this.verificarPeriodos(
+            usuarioExistente.Id,
+            documento,
+            fechaInicioFormato,
+            fechaFinFormato,
+            rolId,
+            nombreRol,
+            email
+          );
+        } else {
+          this.crearNuevoUsuario(
+            usuario,
+            fechaInicioFormato,
+            fechaFinFormato,
+            rolId,
+            nombreRol,
+            email
+          );
+        }
+      },
+      error: () => this.mostrarError('Error al verificar el usuario.'),
+      complete: () => (this.loading = false),
+    });
+  }
+  
+  private verificarPeriodos(
+    usuarioId: number,
+    documento: string,
+    fechaInicio: string,
+    fechaFin: string,
+    rolId: number,
+    nombreRol: string,
+    email: string
+  ) {
+    this.historico_service.get(`usuarios/${documento}/periodos`).subscribe({
+      next: (response: any) => {
+        const periodos = response?.Data || [];
+        
+        const periodoVigente = periodos.find((p: any) => {
+          return p.RolId.Id === Number(rolId) && p.Finalizado === false;          
+        });
+             
+  
+        if (periodoVigente) {
+          this.mostrarError('El usuario ya tiene vigente el rol asignado.');
+        } else {
+          this.crearPeriodoRol(
+            usuarioId,
+            fechaInicio,
+            fechaFin,
+            rolId,
+            nombreRol,
+            email
+          );
+        }
+      },
+      error: () => this.mostrarError('Error al verificar los periodos del usuario.'),
+    });
+  }
+  
+  private crearNuevoUsuario(
+    usuario: any,
+    fechaInicio: string,
+    fechaFin: string,
+    rolId: number,
+    nombreRol: string,
+    email: string
+  ) {
     this.historico_service.post('usuarios/', usuario).subscribe({
       next: (response: any) => {
-        const periodo = {
-          FechaFin: fechaFinFormato,
-          FechaInicio: fechaInicioFormato,
-          Finalizado: false,
-          RolId: { Id: rolId },
-          UsuarioId: { Id: response.Data.Id },
-        };
-        this.historico_service
-          .post('periodos-rol-usuarios/', periodo)
-          .subscribe({
-            next: (response: any) => {
-              console.log('Periodo creado:', response);
-              this.loading = false;
-            },
-            error: (err: any) => {
-              console.error('Error al crear periodo:', err);
-              this.modalService.mostrarModal('Error al crear el periodo para el usuario.', 'warning','error');
-              this.loading = false;
-            },
-          });
-        this.autenticacionService
-          .PostRol('rol/add', nombreRol, email)
-          .subscribe({
-            next: (response: any) => {
-              console.log('Rol creado:', response);
-              this.loading = false;
-              this.modalService.mostrarModal('Usuario, periodo y rol creados exitosamente.', 'success', 'Creado');
-            },
-            error: (err: any) => {
-              console.error('Error al crear rol:', err);
-              this.modalService.mostrarModal('Error al asignar el rol al usuario.', 'warning','error');
-            },
-          });
+        this.crearPeriodoRol(
+          response.Data.Id,
+          fechaInicio,
+          fechaFin,
+          rolId,
+          nombreRol,
+          email
+        );
       },
-      error: (err: any) => {
-        console.error('Error al crear usuario:', err);
-        this.modalService.mostrarModal('Error al crear el usuario. Verifica los datos e intenta nuevamente.', 'warning','error');
-        this.loading = false;
-      },
+      error: () => this.mostrarError('Error al crear el usuario.'),
     });
+  }
+  
+  private crearPeriodoRol(
+    usuarioId: number,
+    fechaInicio: string,
+    fechaFin: string,
+    rolId: number,
+    nombreRol: string,
+    email: string
+  ) {
+    const periodo = {
+      FechaFin: fechaFin,
+      FechaInicio: fechaInicio,
+      finalizado: false,
+      RolId: { Id: rolId },
+      UsuarioId: { Id: usuarioId },
+    };
+  
+    this.historico_service.post('periodos-rol-usuarios/', periodo).subscribe({
+      next: () => {
+        this.asignarRol(nombreRol, email);
+      },
+      error: () => this.mostrarError('Error al crear el periodo.'),
+    });
+  }
+  
+  private asignarRol(nombreRol: string, email: string) {
+    this.autenticacionService.PostRol('rol/add', nombreRol, email).subscribe({
+      next: () => {
+        this.modalService.mostrarModal(
+          'Rol asignado exitosamente.',
+          'success',
+          'Creado'
+        );
+      },
+      error: () => this.mostrarError('Error al asignar el rol al usuario.'),
+      complete: () => (this.loading = false),
+    });
+  }
+  
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+  
+  private mostrarError(mensaje: string) {
+    this.modalService.mostrarModal(mensaje, 'warning', 'error');
+    this.loading = false;
   }
 
   BuscarTercero(documento: string) {
@@ -132,12 +226,20 @@ export class RegistrarUsuarioComponent {
             this.nombreCompleto = data[0].Tercero.NombreCompleto;
             this.loading = false;
           } else {
-            this.modalService.mostrarModal('No se encontraron datos del usuario con el documento proporcionado.', 'warning','error');
-            this.loading = false;
+            this.modalService.mostrarModal(
+              'No se encontraron datos del usuario con el documento proporcionado.',
+              'warning',
+              'error'
+            );
+            //this.loading = false;
           }
         },
         error: (err: any) => {
-          this.modalService.mostrarModal('No se encontraron datos del usuario ingresado', 'warning','error');
+          this.modalService.mostrarModal(
+            'No se encontraron datos del usuario ingresado',
+            'warning',
+            'error'
+          );
           this.loading = false;
         },
       });
@@ -145,9 +247,18 @@ export class RegistrarUsuarioComponent {
 
   BuscarDocumento(documento: string) {
     if (!documento) {
-      this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning','error');
+      this.modalService.mostrarModal(
+        'Por favor, ingresa un documento válido.',
+        'warning',
+        'error'
+      );
       return;
     }
+
+    this.nombreCompleto = '';
+    this.emailInput.nativeElement.value = '';
+    
+
     this.loading = true;
     this.autenticacionService
       .getDocumento(`token/documentoToken`, documento)
@@ -160,12 +271,20 @@ export class RegistrarUsuarioComponent {
             this.emailInput.nativeElement.value = data.email;
             this.loading = false;
           } else {
-            this.modalService.mostrarModal('No se encontraron datos del documento proporcionado.', 'warning','error');
+            this.modalService.mostrarModal(
+              'No se encontraron datos del documento proporcionado.',
+              'warning',
+              'error'
+            );
             this.loading = false;
           }
         },
         error: (err: any) => {
-          this.modalService.mostrarModal('No se encontraron datos del usuario ingresado', 'warning','error');
+          this.modalService.mostrarModal(
+            'No se encontraron datos del usuario ingresado',
+            'warning',
+            'error'
+          );
           this.loading = false;
         },
       });
@@ -173,9 +292,18 @@ export class RegistrarUsuarioComponent {
 
   BuscarCorreo(correo: string) {
     if (!correo) {
-      this.modalService.mostrarModal('Por favor, ingresa un correo válido.', 'warning','error');
+      this.modalService.mostrarModal(
+        'Por favor, ingresa un correo válido.',
+        'warning',
+        'error'
+      );
       return;
     }
+
+    this.nombreCompleto = '';
+    this.emailInput.nativeElement.value = '';
+    this.identificacion = '';
+
     this.loading = true;
     this.autenticacionService.getEmail(`token/userRol`, correo).subscribe({
       next: (data: any) => {
@@ -186,15 +314,22 @@ export class RegistrarUsuarioComponent {
           this.documentoInput.nativeElement.value = this.identificacion;
           this.loading = false;
         } else {
-          this.modalService.mostrarModal('No se encontraron datos asociados al correo proporcionado.', 'warning','error');
+          this.modalService.mostrarModal(
+            'No se encontraron datos asociados al correo proporcionado.',
+            'warning',
+            'error'
+          );
           this.loading = false;
         }
       },
       error: (err: any) => {
-        this.modalService.mostrarModal('Error al buscar el correo. Verifica los datos e intenta nuevamente.', 'warning','error');
+        this.modalService.mostrarModal(
+          'Error al buscar el correo. Verifica los datos e intenta nuevamente.',
+          'warning',
+          'error'
+        );
         this.loading = false;
       },
     });
   }
-
 }

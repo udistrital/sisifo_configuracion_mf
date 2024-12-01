@@ -12,8 +12,8 @@ export const environment = {
       SIGN_OUT_REDIRECT_URL: "http://localhost:4200/",
       AUTENTICACION_MID: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol",
     },
-    HISTORICO_USUARIOS_MID: 'http://localhost:8080/v1/',
+    HISTORICO_USUARIOS_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/usuarios_rol_crud/v1/',
     TERCEROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/terceros_crud/v1/',
-    AUTENTICACION: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol"
+    AUTENTICACION: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
 };
 
