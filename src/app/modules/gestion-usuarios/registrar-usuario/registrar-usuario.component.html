@@ -1,75 +1,146 @@
-<br />
-<br />
-<br />
-<br />
+<div *ngIf="loading" class="spinner-container">
+  <mat-progress-spinner
+    class="spinner"
+    [diameter]="50"
+    [strokeWidth]="5"
+    mode="indeterminate"
+  ></mat-progress-spinner>
+</div>
+<div class="container">
+  <mat-card class="p-4">
+    <div class="row">
+      <div class="col-12">
+        <h2 style="color: var(--md-primary-700)">Crear Usuario(a)</h2>
 
-<div class="container-border">
-  <div *ngIf="loading" class="spinner-container">
-		<mat-progress-spinner
-		  class="spinner"
-		  [diameter]="50"
-		  [strokeWidth]="5"
-		  mode="indeterminate"
-		></mat-progress-spinner>
-	  </div>
-    
-  <h2 class="titulo">Crear Usuario(a)</h2>
+        <div
+          class="d-flex justify-content-center align-items-center fondo-acento-50 my-4"
+        >
+          <mat-icon class="mx-2"> info </mat-icon>
+          <p class="mx-2">
+            Puede buscar al usuario ingresando su documento o correo
+            electrónico, y su información se completará automáticamente en el
+            campo de Nombres y Apellidos.
+          </p>
+        </div>
 
-  <div class="inputs">
-    <mat-form-field appearance="fill">
-      <mat-label>Documento de identidad:</mat-label>
-      <input type="text" matInput #documentoInput />
-      <button mat-icon-button matSuffix (click)="BuscarDocumento(documentoInput.value)">
-        <mat-icon>search</mat-icon>
-      </button>
-    </mat-form-field>
-  
-    <mat-form-field appearance="fill" class="correo">
-      <mat-label>Correo:</mat-label>
-      <input type="text" matInput #emailInput />
-      <button mat-icon-button matSuffix (click)="BuscarCorreo(emailInput.value)">
-        <mat-icon>search</mat-icon>
-      </button>
-    </mat-form-field>
-  </div>
-  
-  <div class="nombre">
-    <mat-form-field appearance="fill">
-      <mat-label>Nombres y Apellidos:</mat-label>
-      <input type="text" matInput [value]="nombreCompleto" readonly/>
-    </mat-form-field>
-  </div>
+        <div class="row">
+          <mat-form-field class="col-12 col-md-6 col-lg-4" appearance="outline">
+            <mat-label>Documento de identidad:</mat-label>
+            <input type="text" matInput #documentoInput />
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="BuscarDocumento(documentoInput.value)"
+            >
+              <mat-icon color="primary">search</mat-icon>
+            </button>
+          </mat-form-field>
 
-  <div class="Rol">
-    <mat-form-field class="rol-width">
-      <mat-label >Rol:</mat-label>
-        <mat-select #rolInput >
-            <mat-option  mat-option *ngFor="let rol of roles" [value]="rol.Id">
+          <mat-form-field class="col-12 col-md-6 col-lg-4" appearance="outline">
+            <mat-label>Correo:</mat-label>
+            <input type="text" matInput #emailInput />
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="BuscarCorreo(emailInput.value)"
+            >
+              <mat-icon color="primary">search</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <mat-form-field class="col-12 col-md-6 col-lg-4" appearance="outline">
+            <mat-label>Nombres y Apellidos:</mat-label>
+            <mat-icon matSuffix color="primary">text_fields </mat-icon>
+            <input
+              disabled
+              type="text"
+              matInput
+              [value]="nombreCompleto"
+              readonly
+            />
+          </mat-form-field>
+        </div>
+        <div
+          class="d-flex justify-content-center align-items-center fondo-acento-50 mt-4 mb-3"
+        >
+          <mat-icon> info </mat-icon>
+          <p class="mx-2">Información de rol</p>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-12 col-md-6 col-lg-4" appearance="outline">
+            <mat-label>Rol:</mat-label>
+            <mat-icon matSuffix color="primary">account_circle </mat-icon>
+            <mat-select #rolInput>
+              <mat-option mat-option *ngFor="let rol of roles" [value]="rol.Id">
                 {{ rol.Nombre }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-  </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-  <div class="fechas">
-    <mat-form-field >
-        <mat-label>Fecha Inicial Rol:</mat-label>
-        <input matInput [matDatepicker]="picker1" [(ngModel)]="fechaInicioValue">
-        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
-    </mat-form-field>
+          <mat-form-field class="col-12 col-md-6 col-lg-4" appearance="outline">
+            <mat-label>Fecha Inicial Rol:</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker1"
+              [(ngModel)]="fechaInicioValue"
+            />
+            <mat-datepicker-toggle
+              color="primary"
+              matIconSuffix
+              [for]="picker1"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
 
-    <mat-form-field >
-        <mat-label>Fecha Final Rol:</mat-label>
-        <input matInput [matDatepicker]="picker2" [(ngModel)]="fechaFinValue">
-        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
-    </mat-form-field>
-    
-  </div>
+          <mat-form-field class="col-12 col-md-6 col-lg-4" appearance="outline">
+            <mat-label>Fecha Final Rol:</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker2"
+              [(ngModel)]="fechaFinValue"
+            />
+            <mat-datepicker-toggle
+              appearance="outline"
+              matIconSuffix
+              [for]="picker2"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+        </div>
 
-  <div class="button-container">
-    <button mat-raised-button class="Bcancelar" >Cancelar</button>
-    <button mat-raised-button color="primary" (click)="crearUsuario(documentoInput.value, fechaInicioValue, fechaFinValue, rolInput.value, emailInput.value)">Guardar</button>
-  </div>
+        <div class="d-flex justify-content-center align-items-center mt-3 mb-2">
+          <mat-icon color="primary"> info </mat-icon>
+          <p class="mx-2">¿Guardar usuario?</p>
+        </div>
+      </div>
+      <mat-dialog-actions align="center">
+        <button
+          mat-stroked-button
+          color="primary"
+          style="border: 1px solid var(--md-primary-500)"
+          [mat-dialog-close]
+          class="mx-1 mb-sm"
+        >
+          <mat-icon>close</mat-icon>No, cancelar
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="
+            crearUsuario(
+              documentoInput.value,
+              fechaInicioValue,
+              fechaFinValue,
+              rolInput.value,
+              emailInput.value
+            )
+          "
+          class="mx-1 mb-sm"
+        >
+          <mat-icon>cloud_upload</mat-icon>
+          Si, guardar
+        </button>
+      </mat-dialog-actions>
+    </div>
+  </mat-card>
 </div>
