@@ -1,5 +1,5 @@
 {
-  "name": "configuracion-mf",
+  "name": "usuario_rol_mf",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:single-spa:configuracion-mf": "ng build configuracion-mf --configuration production",
-    "serve:single-spa:configuracion-mf": "ng s --project configuracion-mf --disable-host-check --port 4202 --live-reload false"
+    "build:single-spa:usuario_rol_mf": "ng build usuario_rol_mf --configuration production",
+    "serve:single-spa:usuario_rol_mf": "ng s --project usuario_rol_mf --disable-host-check --port 4202 --live-reload false"
   },
   "private": true,
   "dependencies": {

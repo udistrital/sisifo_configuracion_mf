@@ -19,7 +19,7 @@ const lifecycles = singleSpaAngular({
     singleSpaPropsSubject.next(singleSpaProps);
     return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
   },
-  template: '<sisifo-configuracion-mf  />',
+  template: '<sisifo-usuario_rol_mf />',
   Router,
   NavigationStart,
   NgZone,

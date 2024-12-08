@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "configuracion-mf": {
+    "usuario_rol_mf": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/configuracion-mf",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.single-spa.ts",
             "polyfills": [
@@ -35,10 +35,9 @@
             "scripts": [],
             "customWebpackConfig": {
               "path": "extra-webpack.config.js",
-              "libraryName": "configuracion-mf",
+              "libraryName": "usuario_rol_mf",
               "libraryTarget": "umd"
-            },
-            "deployUrl": "http://localhost:4202/"
+            }
           },
           "configurations": {
             "production": {
@@ -57,6 +56,22 @@
               "outputHashing": "none"
             },
             "development": {
+              "buildOptimizer": true,
+              "optimization": true,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": false,
+              "namedChunks": false,
+              "outputHashing": "none",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ],
+              "deployUrl": "https://pruebasgestionusuariorol.portaloas.udistrital.edu.co/"
+            },
+            "local": {
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -64,32 +79,30 @@
               "sourceMap": true,
               "namedChunks": true,
               "outputHashing": "none",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
+              "deployUrl": "http://localhost:4202/"
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "local"
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "configuracion-mf:build:production"
+              "browserTarget": "usuario_rol_mf:build:production"
             },
             "development": {
-              "browserTarget": "configuracion-mf:build:development"
+              "browserTarget": "usuario_rol_mf:build:development"
+            },
+            "local": {
+              "browserTarget": "usuario_rol_mf:build:local"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "local"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "configuracion-mf:build"
+            "buildTarget": "usuario_rol_mf:build"
           }
         },
         "test": {
