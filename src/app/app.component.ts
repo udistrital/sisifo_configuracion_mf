@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'sisifo-configuracion-mf',
+  selector: 'sisifo-usuario_rol_mf',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'sisifo-configuracion-mf';
+  title = 'sisifo-usuario_rol_mf';
 }
