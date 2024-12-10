@@ -3,14 +3,12 @@ import { APP_BASE_HREF } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from 'src/_guards/auth.guard';
 
 export const routes: Routes = [
   { 
-    path: "gestion-roles",
-    loadChildren: () => import ('./modules/gestion-roles/gestion-roles.module').then(m => m.GestionRolesModule),
-  },
-  { 
     path: "gestion-usuarios",
+    canActivate: [AuthGuard],
     loadChildren: () => import ('./modules/gestion-usuarios/gestion-usuarios.module').then(m => m.GestionUsuariosModule),
   },
 ];

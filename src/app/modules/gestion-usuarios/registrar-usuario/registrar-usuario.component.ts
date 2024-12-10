@@ -1,4 +1,3 @@
-import { Rol, Usuario } from './../../gestion-roles/utils/gestion-usuarios.models';
 import { AutenticacionService } from './../../../services/autenticacion.service';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 

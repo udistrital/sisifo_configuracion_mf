@@ -1,5 +1,6 @@
 import { AutenticacionService } from './../../../services/autenticacion.service';
 import {Component,ElementRef,ViewChild,ChangeDetectorRef,} from '@angular/core';
+import { Router } from '@angular/router';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
@@ -44,7 +45,8 @@ export class ActualizarUsuarioComponent {
     private route: ActivatedRoute,
     private changeDetector: ChangeDetectorRef,
     private authService: ImplicitAutenticationService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private router: Router,
   ) {}
 
   ngAfterViewInit(): void {
@@ -192,6 +194,10 @@ export class ActualizarUsuarioComponent {
     } else {
       console.log('El estado no es "Finalizado", no se realizan cambios.');
     }
+  }
+
+  regresar() {
+    this.router.navigate(['gestion-usuarios/consulta-usuarios']);
   }
 
   estados = ['Finalizado'];
