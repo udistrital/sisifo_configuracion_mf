@@ -11,6 +11,7 @@ import { ModalService } from 'src/app/services/modal.service';
 
 import { Router } from '@angular/router';
 import { ImplicitAutenticationService } from 'src/app/services/implicit-autentication.service';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 
 interface UserData {
@@ -75,18 +76,22 @@ export class UsuariosComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
-    this.authService.getRole().then(roles => {
-      this.permisoEdicion = this.authService.PermisoEdicion(roles);
-      console.log('Permiso de edición:', this.permisoEdicion);
-      this.permisoConsulta = this.authService.PermisoConsulta(roles);
-      console.log('Permiso de consulta:', this.permisoConsulta);
-      if (!this.permisoEdicion) {
-        this.displayedColumns = this.displayedColumns.filter(col => col !== 'acciones');
-      }
-    }).catch(error => {
-      console.error('Error al obtener los roles del usuario:', error);
-    });
+    this.authService
+      .getRole()
+      .then((roles) => {
+        this.permisoEdicion = this.authService.PermisoEdicion(roles);
+        console.log('Permiso de edición:', this.permisoEdicion);
+        this.permisoConsulta = this.authService.PermisoConsulta(roles);
+        console.log('Permiso de consulta:', this.permisoConsulta);
+        if (!this.permisoEdicion) {
+          this.displayedColumns = this.displayedColumns.filter(
+            (col) => col !== 'acciones'
+          );
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener los roles del usuario:', error);
+      });
 
     this.formUsuarios = this.fb.group({
       documento: ['', [Validators.required]],
@@ -99,17 +104,18 @@ export class UsuariosComponent implements OnInit {
     this.sistemaInformacion = environment.SISTEMA_INFORMACION_ID;
     this.PeriodosUsuario(this.sistemaInformacion, this.opcionesPagina[0], 0);
 
-    // Inicializamos el filtro con funciones predicadas personalizadas
-    //this.dataSource.filterPredicate = this.customFilterPredicate();
-
   }
 
-  ngAfterViewInit() {   
-    this.paginator.page.subscribe(() => {      
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
       const limit = this.paginator.pageSize;
       const offset = this.paginator.pageIndex * limit;
       if (this.formUsuarios.get('documento')?.value) {
-        this.BuscarDocumento(this.formUsuarios.get('documento')?.value, limit, offset);
+        this.BuscarDocumento(
+          this.formUsuarios.get('documento')?.value,
+          limit,
+          offset
+        );
       } else {
         this.PeriodosUsuario(this.sistemaInformacion, limit, offset);
       }
@@ -144,101 +150,135 @@ export class UsuariosComponent implements OnInit {
             this.changeDetector.detectChanges();
           } else {
             this.loading = false;
-            this.modalService.mostrarModal('No se encontraron periodos.', 'warning','error');
+            this.modalService.mostrarModal(
+              'No se encontraron periodos.',
+              'warning',
+              'error'
+            );
           }
         },
         error: (err: any) => {
           this.modalService.mostrarModal(
-            'Ocurrió un error al intentar obtener los periodos. Inténtalo nuevamente.', 'warning','error'
+            'Ocurrió un error al intentar obtener los periodos. Inténtalo nuevamente.',
+            'warning',
+            'error'
           );
         },
       });
   }
 
-  BuscarDocumento(documento: string, limit: number, offset: number) {
-    if (!documento) {
-      this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning', 'error');
+  BuscarDocumento(input: string, limit: number, offset: number) {
+    if (!input) {
+      this.modalService.mostrarModal(
+        'Por favor, ingresa un dato valido.',
+        'warning',
+        'error'
+      );
       return;
     }
     this.loading = true;
+    const esEmail = (dato: string): boolean => dato.includes('@');
 
-    this.autenticacionService
-      .getPeriodos(
-        `rol/user/${documento}/periods?query=sistema_informacion:${this.sistemaInformacion}&limit=${limit}&offset=${offset}`
+    const documento$ = esEmail(input)
+      ? this.autenticacionService.getEmail(`token/userRol`, input).pipe(
+          map((data: any) => {
+            if (data?.documento) {
+              return data.documento;
+            } else if (data?.System?.Error === "Usuario no registrado") {
+              throw new Error('Usuario no encontrado.');
+            } else {
+              throw new Error(data?.Message);
+            }
+          }),
+          catchError((error) => {
+            this.modalService.mostrarModal(
+              'No se pudo procesar la solicitud.',
+              'warning',
+              'error'
+            );
+            this.loading = false;
+            return of(null);
+          })
+        )
+      : of(input);
+
+    documento$
+      .pipe(
+        switchMap((documento: string | null) => {
+          if (!documento) {
+            return of(null);
+          }
+          return this.autenticacionService.getPeriodos(
+            `rol/user/${documento}/periods?query=sistema_informacion:${this.sistemaInformacion}&limit=${limit}&offset=${offset}`
+          );
+        })
       )
       .subscribe({
-        next: (response: ApiResponse) => {
+        next: (response: ApiResponse | null) => {
           this.loading = false;
-          if (response.Success && response.Data && response.Data.length > 0) {
+          if (!response) return;
+          if (response.Success && response.Data.length > 0) {
             this.dataSource.data = response.Data;
             this.total = response.Metadata.Count;
             this.changeDetector.detectChanges();
           } else {
             this.modalService.mostrarModal(
-              `No se encontraron periodos para el documento ingresado.`, 'warning','error'
+              `No se encontraron periodos para el documento ingresado.`,
+              'warning',
+              'error'
             );
           }
         },
         error: (err: any) => {
           this.loading = false;
           this.modalService.mostrarModal(
-            `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`, 'warning','error'
+            `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`,
+            'warning',
+            'error'
           );
         },
       });
-  }
-  // BuscarCorreo(correo: string) {
-  //   if (!correo) {
-  //     this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning', 'error');
-  //     return;
-  //   }
-
-  //   this.autenticacionService.getEmail(`token/userRol`, correo).subscribe({
-  //     next: (data: any) => {
-  //       if (data && data.documento) {
-  //         this.identificacion = data.documento;
-
-  //         this.BuscarTercero(this.identificacion);
-  //         this.documentoInput.nativeElement.value = this.identificacion;
-  //       } else {
-  //         this.modalService.mostrarModal();
-  //       }
-  //     },
-  //     error: (err: any) => {
-  //       this.modalService.mostrarModal();
-  //     },
-  //   });
-  // }
+  } 
 
   EliminarPeriodo(id_periodo: number) {
-    this.modalService.modalConfirmacion('El periodo del usuario será eliminado',
-       'warning',
-       '¿Deseas continuar?').then((result) => {
-      if (result.isConfirmed) {
-        this.loading = true;
-        console.log("Periodo: ", id_periodo)
-        this.historico_service.delete('periodos-rol-usuarios/', id_periodo).subscribe({
-          next: (data: any) => {
-            this.loading = false;
-            this.IniciarPaginacion();
-            this.PeriodosUsuario(this.sistemaInformacion, this.opcionesPagina[0], 0);
-            this.modalService.mostrarModal(
-              'El periodo del usuario ha sido eliminado.',
-              'success',
-              'Eliminado'
-            );
-          },
-          error: (err: any) => {
-            this.loading = false;
-            this.modalService.mostrarModal(
-              'Ocurrio un error al intentar eliminar el periodo del usuario. Intente nuevamente.',
-              'error',
-              'error'
-            );
-          },
-        })
-      }
-    })  
+    this.modalService
+      .modalConfirmacion(
+        'El periodo del usuario será eliminado',
+        'warning',
+        '¿Deseas continuar?'
+      )
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.loading = true;
+          console.log('Periodo: ', id_periodo);
+          this.historico_service
+            .delete('periodos-rol-usuarios/', id_periodo)
+            .subscribe({
+              next: (data: any) => {
+                this.loading = false;
+                this.IniciarPaginacion();
+                this.PeriodosUsuario(
+                  this.sistemaInformacion,
+                  this.opcionesPagina[0],
+                  0
+                );
+                this.modalService.mostrarModal(
+                  'El periodo del usuario ha sido eliminado.',
+                  'success',
+                  'Eliminado'
+                );
+              },
+              error: (err: any) => {
+                this.loading = false;
+                this.modalService.mostrarModal(
+                  'Ocurrio un error al intentar eliminar el periodo del usuario. Intente nuevamente.',
+                  'error',
+                  'error'
+                );
+              },
+            });
+        }
+      });
   }
 
   edit(documento: string, id_periodo: number) {
@@ -281,13 +321,5 @@ export class UsuariosComponent implements OnInit {
       : {};
     return currentFilter.state || '';
   }
-
-  // customFilterPredicate() {
-  //   return (data: UserData, filter: string): boolean => {
-  //     const filterObj = JSON.parse(filter);
-  //     const matchRole = filterObj.role ? data.rolUsuario === filterObj.role : true;
-  //     const matchState = filterObj.state ? data.estado.toString() === filterObj.state : true;
-  //     return matchRole && matchState;
-  //   };
-  // }
+  
 }
