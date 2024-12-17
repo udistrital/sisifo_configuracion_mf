@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 import { ModalService } from 'src/app/services/modal.service';
 
 import { Router } from '@angular/router';
-import { ImplicitAutenticationService } from 'src/app/services/implicit-autentication.service';
+import { ImplicitAuthenticationService } from 'src/app/services/implicit-authentication.service';
 import { catchError, map, of, switchMap } from 'rxjs';
 
 
@@ -71,7 +71,7 @@ export class UsuariosComponent implements OnInit {
     private historico_service: HistoricoUsuariosMidService,
     private router: Router,
     private changeDetector: ChangeDetectorRef,
-    private authService: ImplicitAutenticationService,
+    private authService: ImplicitAuthenticationService,
     private modalService: ModalService
   ) {}
 
@@ -250,7 +250,6 @@ export class UsuariosComponent implements OnInit {
       .then((result) => {
         if (result.isConfirmed) {
           this.loading = true;
-          console.log('Periodo: ', id_periodo);
           this.historico_service
             .delete('periodos-rol-usuarios/', id_periodo)
             .subscribe({
@@ -285,41 +284,6 @@ export class UsuariosComponent implements OnInit {
     this.router.navigate(['/gestion-usuarios/actualizar-usuario'], {
       queryParams: { documento, id_periodo },
     });
-  }
-
-  applyDocumentFilter() {
-    // Implementa la lógica para filtrar documentos aquí
-    console.log('Filtro de documento aplicado');
-  }
-
-  applyRoleFilter(event: MatSelectChange) {
-    const filterValue = event.value === 'all' ? '' : event.value;
-    this.dataSource.filter = JSON.stringify({
-      role: filterValue,
-      state: this.currentStateFilter,
-    });
-  }
-
-  applyStateFilter(event: MatSelectChange) {
-    const filterValue = event.value === 'all' ? '' : event.value.toString();
-    this.dataSource.filter = JSON.stringify({
-      role: this.currentRoleFilter,
-      state: filterValue,
-    });
-  }
-
-  get currentRoleFilter() {
-    const currentFilter = this.dataSource.filter
-      ? JSON.parse(this.dataSource.filter)
-      : {};
-    return currentFilter.role || '';
-  }
-
-  get currentStateFilter() {
-    const currentFilter = this.dataSource.filter
-      ? JSON.parse(this.dataSource.filter)
-      : {};
-    return currentFilter.state || '';
-  }
+  } 
   
 }
