@@ -5,8 +5,7 @@ import { environment } from '../../environments/environment.development';
 @Injectable({
   providedIn: 'root',
 })
-export class ImplicitAutenticationService {
-  environment = environment.TOKEN;
+export class ImplicitAuthenticationService {
   rolesConsulta = environment.ROLES_CONSULTA;
   rolesEdicion = environment.ROLES_CONSULTA_EDICION;
   private userSubject = new BehaviorSubject({});
@@ -14,11 +13,11 @@ export class ImplicitAutenticationService {
   httpOptions: { headers: HttpHeaders; } | undefined;
 
   constructor(private httpClient: HttpClient) {
-    this.init(this.environment);
+    this.init();
   }
 
-  init(entorno: { AUTORIZATION_URL: string; CLIENTE_ID: string; RESPONSE_TYPE: string; SCOPE: string; REDIRECT_URL: string; SIGN_OUT_URL: string; SIGN_OUT_REDIRECT_URL: string; AUTENTICACION_MID: string; }): any {
-    this.environment = entorno;
+  init(): any {
+    
     const id_token = window.localStorage.getItem('id_token');
 
     if (id_token) {

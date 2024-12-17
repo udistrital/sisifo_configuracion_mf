@@ -6,7 +6,7 @@ import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios
 import { TercerosService } from 'src/app/services/terceros.service';
 import { ModalService } from 'src/app/services/modal.service';
 import { ActivatedRoute } from '@angular/router';
-import { ImplicitAutenticationService } from 'src/app/services/implicit-autentication.service';
+import { ImplicitAuthenticationService } from 'src/app/services/implicit-authentication.service';
 
 export interface RolRegistro {
   Nombre: string;
@@ -44,7 +44,7 @@ export class ActualizarUsuarioComponent {
     private autenticacionService: AutenticacionService,
     private route: ActivatedRoute,
     private changeDetector: ChangeDetectorRef,
-    private authService: ImplicitAutenticationService,
+    private authService: ImplicitAuthenticationService,
     private modalService: ModalService,
     private router: Router,
   ) {}
