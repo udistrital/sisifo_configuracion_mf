@@ -107,6 +107,22 @@ export class UsuariosComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+
+    this.paginator._intl.itemsPerPageLabel = 'Elementos por página';
+    this.paginator._intl.nextPageLabel = 'Página siguiente';
+    this.paginator._intl.previousPageLabel = 'Página anterior';
+    this.paginator._intl.firstPageLabel = 'Primera página';
+    this.paginator._intl.lastPageLabel = 'Última página';
+
+    this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+      if (length === 0 || pageSize === 0) {
+        return `0 de ${length}`;
+      }
+      const startIndex = page * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, length);
+      return `${startIndex + 1} - ${endIndex} de ${length}`;
+    };
+
     this.paginator.page.subscribe(() => {
       const limit = this.paginator.pageSize;
       const offset = this.paginator.pageIndex * limit;
