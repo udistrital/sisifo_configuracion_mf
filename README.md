@@ -1,10 +1,11 @@
 # Usuario Rol Microcliente
 
-Cliente para la gestión del usuario_mf, manejo de usuarios y control de roles, parte del sistema de auditoria (Sísifo). Este proyecto está desarrollado con Angular.
+Microcliente para la gestión de los periodos de roles de un usuario, este sistema complementa su funcionalidad con WSO2. Este microcliente es de uso transversal para los sistemas que requieran gestionar los roles de los usuarios.
 
 ## Especificaciones Técnicas
 
 ### Tecnologías Implementadas y Versiones
+<img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="Angular Logo" width="40" height="40">
 
 - [Angular](https://angular.io/docs) 17.3.12
   - Incluye Animations, Common, Compiler, Core, Forms, Platform-Browser, Platform-Browser-Dynamic, Router
@@ -152,10 +153,10 @@ Con estos pasos, se tendrán las partes mínimas necesarias para ejecutar el pro
 
 ## Estado CI
 
-```bash
-# Developing
-```
-| 
+| Develop | Relese | Main |
+| -- | -- | -- |
+| [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/usuario_rol_mf/status.svg?ref=refs/heads/develop)](https://hubci.portaloas.udistrital.edu.co/udistrital/usuario_rol_mf/) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/usuario_rol_mf/status.svg?ref=refs/heads/release/0.0.1)](https://hubci.portaloas.udistrital.edu.co/udistrital/usuario_rol_mf/) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/usuario_rol_mf/status.svg?ref=refs/heads/main)](https://hubci.portaloas.udistrital.edu.co/udistrital/usuario_rol_mf/) |
+
 ## Licencia
 
 [This file is part of usuario_rol_mf](LICENSE)
