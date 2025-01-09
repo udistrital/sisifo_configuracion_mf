@@ -1,5 +1,6 @@
 import { AutenticacionService } from './../../../services/autenticacion.service';
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
@@ -30,7 +31,8 @@ export class RegistrarUsuarioComponent {
     private historico_service: HistoricoUsuariosMidService,
     private terceros_service: TercerosService,
     private autenticacionService: AutenticacionService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -300,7 +302,6 @@ export class RegistrarUsuarioComponent {
     }
 
     this.nombreCompleto = '';
-    this.emailInput.nativeElement.value = '';
     this.identificacion = '';
 
     this.loading = true;
@@ -330,5 +331,9 @@ export class RegistrarUsuarioComponent {
         this.loading = false;
       },
     });
+  }
+
+  regresar() {
+    this.router.navigate(['gestion-usuarios/consulta-usuarios']);
   }
 }
