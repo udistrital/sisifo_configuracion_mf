@@ -10,6 +10,7 @@ import { ImplicitAuthenticationService } from 'src/app/services/implicit-authent
 
 export interface RolRegistro {
   Nombre: string;
+  NombreWso2: string;
   Id: number;
 }
 
@@ -137,8 +138,8 @@ export class ActualizarUsuarioComponent {
         this.fechaInicioRol = new Date(data.Data.FechaInicio + 'T00:00:00');
         this.fechaFinRol = new Date(data.Data.FechaFin + 'T00:00:00');
         this.usuarioId = data.Data.UsuarioId.Id;
-        this.nombreRol = data.Data.RolId.Nombre;
-        this.rolInput.nativeElement.value = this.nombreRol;
+        this.nombreRol = data.Data.RolId.NombreWso2;
+        this.rolInput.nativeElement.value = data.Data.RolId.Nombre;
         this.email = this.emailInput?.nativeElement?.value || '';
         this.idPeriodo = idPeriodo;
         this.loading = false;
