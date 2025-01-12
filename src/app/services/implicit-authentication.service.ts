@@ -14,6 +14,8 @@ export class ImplicitAuthenticationService {
 
   constructor(private httpClient: HttpClient) {
     this.init();
+    const user: any = localStorage.getItem('user');
+    this.userSubject.next(JSON.parse(atob(user)));
   }
 
   init(): any {
@@ -45,8 +47,13 @@ export class ImplicitAuthenticationService {
   public getRole() {
     return new Promise<string[]>((resolve) => {
       this.user$.subscribe((data: any) => {
-        const { user } = data;
-        const roles = user.role || [];
+        console.log("data",data);
+        const { user, userService } = data;
+        const roleUser = typeof user.role !== 'undefined' ? user.role : [];
+        const roleUserService = typeof userService.role !== 'undefined' ? userService.role : [];
+        const roles = roleUser
+        .concat(roleUserService)
+        .filter((data: any) => data.indexOf('/') === -1);
         resolve(roles);
       });
     });
