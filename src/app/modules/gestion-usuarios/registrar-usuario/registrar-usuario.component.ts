@@ -8,6 +8,7 @@ import { ModalService } from 'src/app/services/modal.service';
 
 export interface RolRegistro {
   Nombre: string;
+  NombreWso2: string;
   Id: number;
 }
 
@@ -76,7 +77,7 @@ export class RegistrarUsuarioComponent {
     const fechaInicioFormato = this.formatDate(fechaInicio);
     const fechaFinFormato = this.formatDate(fechaFin);
     const usuario = { Documento: documento };
-    const nombreRol = this.roles.find((r) => r.Id === rolId)?.Nombre || '';
+    const nombreRol = this.roles.find((r) => r.Id === rolId)?.NombreWso2 || '';
   
     this.historico_service.get(`usuarios?query=documento:${documento}`).subscribe({
       next: (response: any) => {
