@@ -1,5 +1,10 @@
 import { AutenticacionService } from './../../../services/autenticacion.service';
-import {Component,ElementRef,ViewChild,ChangeDetectorRef,} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
@@ -47,7 +52,7 @@ export class ActualizarUsuarioComponent {
     private changeDetector: ChangeDetectorRef,
     private authService: ImplicitAuthenticationService,
     private modalService: ModalService,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngAfterViewInit(): void {
@@ -89,12 +94,20 @@ export class ActualizarUsuarioComponent {
             this.nombreCompleto = data[0].Tercero.NombreCompleto;
             this.changeDetector.detectChanges();
           } else {
-            this.modalService.mostrarModal('Usuario no encontrado.','warning','error');
+            this.modalService.mostrarModal(
+              'Usuario no encontrado.',
+              'warning',
+              'error'
+            );
           }
           this.loading = false;
         },
         error: (err: any) => {
-          this.modalService.mostrarModal('Error al buscar usuario.','warning','error');
+          this.modalService.mostrarModal(
+            'Error al buscar usuario.',
+            'warning',
+            'error'
+          );
           this.loading = false;
         },
       });
@@ -102,7 +115,11 @@ export class ActualizarUsuarioComponent {
 
   BuscarDocumento(documento: string, idPeriodo: number) {
     if (!documento) {
-      this.modalService.mostrarModal('Por favor, ingresa un documento válido.', 'warning','error' );
+      this.modalService.mostrarModal(
+        'Por favor, ingresa un documento válido.',
+        'warning',
+        'error'
+      );
       return;
     }
     this.loading = true;
@@ -119,12 +136,20 @@ export class ActualizarUsuarioComponent {
             this.changeDetector.detectChanges();
             this.InfoPeriodo(idPeriodo);
           } else {
-            this.modalService.mostrarModal('Usuario no encontrado.','warning','error');
+            this.modalService.mostrarModal(
+              'Usuario no encontrado.',
+              'warning',
+              'error'
+            );
           }
           this.loading = false;
         },
         error: (err: any) => {
-          this.modalService.mostrarModal('Error al buscar el documento.','warning','error');
+          this.modalService.mostrarModal(
+            'Error al buscar el documento.',
+            'warning',
+            'error'
+          );
           this.loading = false;
         },
       });
@@ -146,15 +171,19 @@ export class ActualizarUsuarioComponent {
       },
       error: (err: any) => {
         console.error('Error al cargar el periodo:', err);
-        this.modalService.mostrarModal('Error al cargar el periodo.','warning','error');
+        this.modalService.mostrarModal(
+          'Error al cargar el periodo.',
+          'warning',
+          'error'
+        );
         this.loading = false;
       },
     });
   }
 
   ActualizarPeriodo() {
-    if (this.estadoPeriodo === 'Finalizado') {
-      this.loading = true;
+    this.loading = true;
+    if (this.estadoPeriodo === 'Finalizado') {      
       this.autenticacionService
         .PostRol('rol/remove', this.nombreRol, this.email)
         .subscribe({
@@ -177,23 +206,65 @@ export class ActualizarUsuarioComponent {
                 next: (response: any) => {
                   console.log('Periodo actualizado:', response);
                   this.loading = false;
-                  this.modalService.mostrarModal('Periodo actualizado exitosamente.','success','Actualizado');
+                  this.modalService.mostrarModal(
+                    'Periodo actualizado exitosamente.',
+                    'success',
+                    'Actualizado'
+                  );
                 },
                 error: (err: any) => {
                   console.error('Error al actualizar periodo:', err);
-                  this.modalService.mostrarModal('Error al actualizar el periodo.','warning','error');
-                  this.loading = false;
+                  this.modalService.mostrarModal(
+                    'Error al actualizar el periodo.',
+                    'warning',
+                    'error'
+                  );              
                 },
+                complete: () => this.loading = false,
               });
           },
           error: (err: any) => {
             console.error('Error al eliminar rol:', err);
-            this.modalService.mostrarModal('Error al eliminar el rol.','warning','error');
+            this.modalService.mostrarModal(
+              'Error al eliminar el rol.',
+              'warning',
+              'error'
+            );
             this.loading = false;
           },
         });
     } else {
-      console.log('El estado no es "Finalizado", no se realizan cambios.');
+      this.historico_service
+        .put(`periodos-rol-usuarios/${this.idPeriodo}`, {
+          FechaInicio: this.fechaInicioRol?.toISOString().split('T')[0],
+          FechaFin: this.fechaFinRol?.toISOString().split('T')[0],
+          Finalizado: false,
+          RolId: {
+            Id: this.idRol,
+          },
+          UsuarioId: {
+            Id: this.usuarioId,
+          },
+        })
+        .subscribe({
+          next: (response: any) => {
+            console.log('Periodo actualizado:', response);
+            this.modalService.mostrarModal(
+              'Periodo actualizado exitosamente.',
+              'success',
+              'Actualizado'
+            );
+          },
+          error: (err: any) => {
+            console.error('Error al actualizar periodo:', err);
+            this.modalService.mostrarModal(
+              'Error al actualizar el periodo.',
+              'warning',
+              'error'
+            );            
+          },
+          complete: () => this.loading = false,
+        });
     }
   }
 
