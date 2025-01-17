@@ -3,8 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { HttpErrorManager } from './errorManager';
 
-
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 /**
  * This class manage the http connections with internal REST services. Use the response format {
@@ -37,7 +36,7 @@ export class RequestManager {
    */
   public setPath(service: string) {
     this.path = environment[service as keyof typeof environment];
-    console.log("el path es:", this.path)
+    console.log('el path es:', this.path);
   }
 
   /**
