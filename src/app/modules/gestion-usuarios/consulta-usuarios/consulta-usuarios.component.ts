@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
@@ -12,7 +18,6 @@ import { ModalService } from 'src/app/services/modal.service';
 import { Router } from '@angular/router';
 import { ImplicitAuthenticationService } from 'src/app/services/implicit-authentication.service';
 import { catchError, map, of, switchMap } from 'rxjs';
-
 
 interface UserData {
   nombre: string;
@@ -38,7 +43,6 @@ interface ApiResponse {
   styleUrls: ['./consulta-usuarios.component.scss'],
 })
 export class UsuariosComponent implements OnInit {
-  loading: boolean = false;
   @ViewChild('documentoInput') documentoInput!: ElementRef;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   formUsuarios!: FormGroup;
@@ -103,18 +107,20 @@ export class UsuariosComponent implements OnInit {
 
     this.sistemaInformacion = environment.SISTEMA_INFORMACION_ID;
     this.PeriodosUsuario(this.sistemaInformacion, this.opcionesPagina[0], 0);
-
   }
 
   ngAfterViewInit() {
-
     this.paginator._intl.itemsPerPageLabel = 'Elementos por página';
     this.paginator._intl.nextPageLabel = 'Página siguiente';
     this.paginator._intl.previousPageLabel = 'Página anterior';
     this.paginator._intl.firstPageLabel = 'Primera página';
     this.paginator._intl.lastPageLabel = 'Última página';
 
-    this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+    this.paginator._intl.getRangeLabel = (
+      page: number,
+      pageSize: number,
+      length: number
+    ) => {
       if (length === 0 || pageSize === 0) {
         return `0 de ${length}`;
       }
@@ -152,20 +158,17 @@ export class UsuariosComponent implements OnInit {
   }
 
   PeriodosUsuario(sistema: number, limit: number, offset: number) {
-    this.loading = true;
     this.autenticacionService
       .getPeriodos(
         `rol/periods?query=sistema_informacion:${sistema}&limit=${limit}&offset=${offset}`
       )
       .subscribe({
         next: (response: ApiResponse) => {
-          this.loading = false;
           if (response.Success && response.Data && response.Data.length > 0) {
             this.dataSource.data = response.Data;
             this.total = response.Metadata.Count;
             this.changeDetector.detectChanges();
           } else {
-            this.loading = false;
             this.modalService.mostrarModal(
               'No se encontraron periodos.',
               'warning',
@@ -192,7 +195,6 @@ export class UsuariosComponent implements OnInit {
       );
       return;
     }
-    this.loading = true;
     const esEmail = (dato: string): boolean => dato.includes('@');
 
     const documento$ = esEmail(input)
@@ -200,7 +202,7 @@ export class UsuariosComponent implements OnInit {
           map((data: any) => {
             if (data?.documento) {
               return data.documento;
-            } else if (data?.System?.Error === "Usuario no registrado") {
+            } else if (data?.System?.Error === 'Usuario no registrado') {
               throw new Error('Usuario no encontrado.');
             } else {
               throw new Error(data?.Message);
@@ -212,7 +214,6 @@ export class UsuariosComponent implements OnInit {
               'warning',
               'error'
             );
-            this.loading = false;
             return of(null);
           })
         )
@@ -231,7 +232,6 @@ export class UsuariosComponent implements OnInit {
       )
       .subscribe({
         next: (response: ApiResponse | null) => {
-          this.loading = false;
           if (!response) return;
           if (response.Success && response.Data.length > 0) {
             this.dataSource.data = response.Data;
@@ -246,7 +246,6 @@ export class UsuariosComponent implements OnInit {
           }
         },
         error: (err: any) => {
-          this.loading = false;
           this.modalService.mostrarModal(
             `Ocurrió un error al buscar el documento ingresado. Inténtalo nuevamente.`,
             'warning',
@@ -254,7 +253,7 @@ export class UsuariosComponent implements OnInit {
           );
         },
       });
-  } 
+  }
 
   EliminarPeriodo(id_periodo: number) {
     this.modalService
@@ -265,12 +264,10 @@ export class UsuariosComponent implements OnInit {
       )
       .then((result) => {
         if (result.isConfirmed) {
-          this.loading = true;
           this.historico_service
             .delete('periodos-rol-usuarios/', id_periodo)
             .subscribe({
               next: (data: any) => {
-                this.loading = false;
                 this.IniciarPaginacion();
                 this.PeriodosUsuario(
                   this.sistemaInformacion,
@@ -284,7 +281,6 @@ export class UsuariosComponent implements OnInit {
                 );
               },
               error: (err: any) => {
-                this.loading = false;
                 this.modalService.mostrarModal(
                   'Ocurrio un error al intentar eliminar el periodo del usuario. Intente nuevamente.',
                   'error',
@@ -300,6 +296,5 @@ export class UsuariosComponent implements OnInit {
     this.router.navigate(['/gestion-usuarios/actualizar-usuario'], {
       queryParams: { documento, id_periodo },
     });
-  } 
-  
+  }
 }

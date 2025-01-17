@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
-import { RequestManager } from '../managers/requestManager';
+import { RequestManager } from '../core/managers/requestManager';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class AutenticacionService {
-
   constructor(private requestManager: RequestManager) {
     this.requestManager.setPath('AUTENTICACION');
   }
- 
+
   getEmail(endpoint: any, email: string): any {
     this.requestManager.setPath('AUTENTICACION');
     const payload = { user: email };
@@ -29,9 +27,8 @@ export class AutenticacionService {
   }
 
   PostRol(endpoint: any, rol: string, user: string): any {
-  this.requestManager.setPath('AUTENTICACION');
-  const payload = { rol: rol, user: user };
-  return this.requestManager.post(endpoint, payload);
+    this.requestManager.setPath('AUTENTICACION');
+    const payload = { rol: rol, user: user };
+    return this.requestManager.post(endpoint, payload);
   }
-
 }

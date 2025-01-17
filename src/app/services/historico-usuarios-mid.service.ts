@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { RequestManager } from '../managers/requestManager';
+import { RequestManager } from '../core/managers/requestManager';
 
 @Injectable()
-
 export class HistoricoUsuariosMidService {
-
   constructor(private requestManager: RequestManager) {
     this.requestManager.setPath('HISTORICO_USUARIOS_MID');
   }
@@ -27,5 +25,4 @@ export class HistoricoUsuariosMidService {
     this.requestManager.setPath('HISTORICO_USUARIOS_MID');
     return this.requestManager.delete(endpoint, id);
   }
-
 }

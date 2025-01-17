@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RequestManager } from '../managers/requestManager';
+import { RequestManager } from '../core/managers/requestManager';
 
 @Injectable({
   providedIn: 'root',
