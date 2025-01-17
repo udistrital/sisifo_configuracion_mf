@@ -62,7 +62,7 @@ export class UsuariosComponent implements OnInit {
   dataSource = new MatTableDataSource<UserData>([]);
   sistemaInformacion!: number;
   total!: number;
-  opcionesPagina: number[] = [2, 4, 6];
+  opcionesPagina: number[] = [10, 15, 20];
   permisoEdicion: boolean = false;
   permisoConsulta: boolean = false;
 
