@@ -4,20 +4,21 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MatIconModule } from '@angular/material/icon';
-//import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SpinnerComponent } from './shared/components/spinner/spinner.component';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { SpinnerIntercerptor } from './core/intercerptors/spinner.interceptor';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
+  declarations: [AppComponent, SpinnerComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     MatIconModule,
-    //MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [provideHttpClient(withInterceptors([SpinnerIntercerptor]))],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
