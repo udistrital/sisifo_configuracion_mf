@@ -7,10 +7,8 @@ import {
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
 import { MatPaginator } from '@angular/material/paginator';
 import { AutenticacionService } from 'src/app/services/autenticacion.service';
-import { TercerosService } from 'src/app/services/terceros.service';
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { environment } from 'src/environments/environment';
 import { ModalService } from 'src/app/services/modal.service';
@@ -18,6 +16,8 @@ import { ModalService } from 'src/app/services/modal.service';
 import { Router } from '@angular/router';
 import { ImplicitAuthenticationService } from 'src/app/services/implicit-authentication.service';
 import { catchError, map, of, switchMap } from 'rxjs';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 interface UserData {
   nombre: string;
@@ -53,10 +53,8 @@ export class UsuariosComponent implements OnInit {
     'documento',
     'correo',
     'rolUsuario',
+    'periodo',
     'estado',
-    'fechaInicial',
-    'fechaFinal',
-    'finalizado',
     'acciones',
   ];
   dataSource = new MatTableDataSource<UserData>([]);
@@ -69,14 +67,13 @@ export class UsuariosComponent implements OnInit {
   roles: string[] = ['Administrador', 'Usuario Estándar'];
 
   constructor(
-    private fb: FormBuilder,
-    private terceros_service: TercerosService,
-    private autenticacionService: AutenticacionService,
-    private historico_service: HistoricoUsuariosMidService,
-    private router: Router,
-    private changeDetector: ChangeDetectorRef,
-    private authService: ImplicitAuthenticationService,
-    private modalService: ModalService
+    private readonly fb: FormBuilder,
+    private readonly autenticacionService: AutenticacionService,
+    private readonly historico_service: HistoricoUsuariosMidService,
+    private readonly router: Router,
+    private readonly changeDetector: ChangeDetectorRef,
+    private readonly authService: ImplicitAuthenticationService,
+    private readonly modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -296,5 +293,9 @@ export class UsuariosComponent implements OnInit {
     this.router.navigate(['/gestion-usuarios/actualizar-usuario'], {
       queryParams: { documento, id_periodo },
     });
+  }
+
+  formatFecha(fecha: Date): string {
+    return moment(fecha).format('DD [de] MMMM [de] YYYY');
   }
 }

@@ -6,19 +6,23 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/_guards/auth.guard';
 
 export const routes: Routes = [
-  { 
-    path: "gestion-usuarios",
-    canActivate: [AuthGuard],
-    loadChildren: () => import ('./modules/gestion-usuarios/gestion-usuarios.module').then(m => m.GestionUsuariosModule),
+  {
+    path: 'gestion-usuarios',
+    //todo: descomentar
+    // canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./modules/gestion-usuarios/gestion-usuarios.module').then(
+        (m) => m.GestionUsuariosModule
+      ),
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [{ provide: APP_BASE_HREF, useValue: "/configuracion/" },
-  provideHttpClient(withFetch())
+  providers: [
+    { provide: APP_BASE_HREF, useValue: '/configuracion/' },
+    provideHttpClient(withFetch()),
   ],
 })
-
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -5,12 +5,12 @@ import {
   ViewChild,
   ChangeDetectorRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { ModalService } from 'src/app/services/modal.service';
-import { ActivatedRoute } from '@angular/router';
+
 import { ImplicitAuthenticationService } from 'src/app/services/implicit-authentication.service';
 
 export interface RolRegistro {
@@ -45,14 +45,14 @@ export class ActualizarUsuarioComponent {
   permisoConsulta: boolean = false;
 
   constructor(
-    private historico_service: HistoricoUsuariosMidService,
-    private terceros_service: TercerosService,
-    private autenticacionService: AutenticacionService,
-    private route: ActivatedRoute,
-    private changeDetector: ChangeDetectorRef,
-    private authService: ImplicitAuthenticationService,
-    private modalService: ModalService,
-    private router: Router
+    private readonly historico_service: HistoricoUsuariosMidService,
+    private readonly terceros_service: TercerosService,
+    private readonly autenticacionService: AutenticacionService,
+    private readonly route: ActivatedRoute,
+    private readonly changeDetector: ChangeDetectorRef,
+    private readonly authService: ImplicitAuthenticationService,
+    private readonly modalService: ModalService,
+    private readonly router: Router
   ) {}
 
   ngAfterViewInit(): void {
@@ -183,7 +183,7 @@ export class ActualizarUsuarioComponent {
 
   ActualizarPeriodo() {
     this.loading = true;
-    if (this.estadoPeriodo === 'Finalizado') {      
+    if (this.estadoPeriodo === 'Finalizado') {
       this.autenticacionService
         .PostRol('rol/remove', this.nombreRol, this.email)
         .subscribe({
@@ -218,9 +218,9 @@ export class ActualizarUsuarioComponent {
                     'Error al actualizar el periodo.',
                     'warning',
                     'error'
-                  );              
+                  );
                 },
-                complete: () => this.loading = false,
+                complete: () => (this.loading = false),
               });
           },
           error: (err: any) => {
@@ -261,9 +261,9 @@ export class ActualizarUsuarioComponent {
               'Error al actualizar el periodo.',
               'warning',
               'error'
-            );            
+            );
           },
-          complete: () => this.loading = false,
+          complete: () => (this.loading = false),
         });
     }
   }

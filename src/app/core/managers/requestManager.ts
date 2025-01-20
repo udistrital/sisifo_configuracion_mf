@@ -36,7 +36,6 @@ export class RequestManager {
    */
   public setPath(service: string) {
     this.path = environment[service as keyof typeof environment];
-    console.log('el path es:', this.path);
   }
 
   /**
