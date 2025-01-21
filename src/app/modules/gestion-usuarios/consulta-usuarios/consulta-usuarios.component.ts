@@ -81,9 +81,7 @@ export class UsuariosComponent implements OnInit {
       .getRole()
       .then((roles) => {
         this.permisoEdicion = this.authService.PermisoEdicion(roles);
-        console.log('Permiso de edición:', this.permisoEdicion);
         this.permisoConsulta = this.authService.PermisoConsulta(roles);
-        console.log('Permiso de consulta:', this.permisoConsulta);
         if (!this.permisoEdicion) {
           this.displayedColumns = this.displayedColumns.filter(
             (col) => col !== 'acciones'
@@ -98,9 +96,7 @@ export class UsuariosComponent implements OnInit {
       documento: ['', [Validators.required]],
     });
 
-    this.formUsuarios.valueChanges.subscribe((value) => {
-      console.log('Formulario actualizado:', value);
-    });
+    this.formUsuarios.valueChanges.subscribe((value) => {});
 
     this.sistemaInformacion = environment.SISTEMA_INFORMACION_ID;
     this.PeriodosUsuario(this.sistemaInformacion, this.opcionesPagina[0], 0);

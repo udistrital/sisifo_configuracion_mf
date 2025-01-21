@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { ModalService } from 'src/app/services/modal.service';
+import { esFechaFinValida } from 'src/app/shared/utils/fecha';
+import { AlertService } from 'src/app/services/alert.service';
 
 export interface RolRegistro {
   Nombre: string;
@@ -29,6 +31,7 @@ export class RegistrarUsuarioComponent {
   loading = false;
 
   constructor(
+    private readonly alertaService: AlertService,
     private readonly historico_service: HistoricoUsuariosMidService,
     private readonly terceros_service: TercerosService,
     private readonly autenticacionService: AutenticacionService,
@@ -72,7 +75,12 @@ export class RegistrarUsuarioComponent {
     rolId: number,
     email: string
   ) {
-    this.loading = true;
+    if (!esFechaFinValida(fechaInicio, fechaFin)) {
+      this.alertaService.showAlert(
+        'Atención',
+        'La fecha final debe ser posterior a la inicial'
+      );
+    }
 
     const fechaInicioFormato = this.formatDate(fechaInicio);
     const fechaFinFormato = this.formatDate(fechaFin);
@@ -337,5 +345,11 @@ export class RegistrarUsuarioComponent {
 
   regresar() {
     this.router.navigate(['gestion-usuarios/consulta-usuarios']);
+  }
+
+  evitarLetraE(event: Event) {
+    //esto ya que el input number permite la letra e
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '');
   }
 }

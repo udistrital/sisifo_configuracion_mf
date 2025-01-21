@@ -10,7 +10,7 @@ export class ImplicitAuthenticationService {
   rolesEdicion = environment.ROLES_CONSULTA_EDICION;
   private userSubject = new BehaviorSubject({});
   public user$ = this.userSubject.asObservable();
-  httpOptions: { headers: HttpHeaders; } | undefined;
+  httpOptions: { headers: HttpHeaders } | undefined;
 
   constructor(private httpClient: HttpClient) {
     this.init();
@@ -19,7 +19,6 @@ export class ImplicitAuthenticationService {
   }
 
   init(): any {
-    
     const id_token = window.localStorage.getItem('id_token');
 
     if (id_token) {
@@ -29,7 +28,7 @@ export class ImplicitAuthenticationService {
     }
   }
 
-  updateAuth(payload: { role: string | string[] | null; }) {
+  updateAuth(payload: { role: string | string[] | null }) {
     payload.role = this.roles2List(payload.role);
     this.userSubject.next({ user: payload });
   }
@@ -47,25 +46,23 @@ export class ImplicitAuthenticationService {
   public getRole() {
     return new Promise<string[]>((resolve) => {
       this.user$.subscribe((data: any) => {
-        console.log("data",data);
         const { user, userService } = data;
         const roleUser = typeof user.role !== 'undefined' ? user.role : [];
-        const roleUserService = typeof userService.role !== 'undefined' ? userService.role : [];
+        const roleUserService =
+          typeof userService.role !== 'undefined' ? userService.role : [];
         const roles = roleUser
-        .concat(roleUserService)
-        .filter((data: any) => data.indexOf('/') === -1);
+          .concat(roleUserService)
+          .filter((data: any) => data.indexOf('/') === -1);
         resolve(roles);
       });
     });
   }
 
   public PermisoEdicion(roles: string[]): boolean {
-    return roles.some(rol =>this.rolesEdicion.includes(rol));
+    return roles.some((rol) => this.rolesEdicion.includes(rol));
   }
 
   public PermisoConsulta(roles: string[]): boolean {
-    return roles.some(rol =>this.rolesConsulta.includes(rol));
+    return roles.some((rol) => this.rolesConsulta.includes(rol));
   }
 }
-
-
