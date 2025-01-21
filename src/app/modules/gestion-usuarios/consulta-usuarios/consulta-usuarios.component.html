@@ -108,10 +108,10 @@
                     matTooltip="La vigencia del rol empezó el {{
                       formatFecha(element.fecha_inicial)
                     }} y {{
-                      element.finalizado ? 'estará vigente hasta' : 'término el'
+                      element.finalizado ? 'término el' : 'estará vigente hasta'
                     }} {{ formatFecha(element.fecha_final) }}."
                   >
-                    {{ element.fecha_inicial | date : "shortDate" }} -
+                    {{ element.fecha_inicial | date : "shortDate" }} - <br />
                     {{ element.fecha_final | date : "shortDate" }}
                   </mat-label>
                 </td>
@@ -123,9 +123,9 @@
                 <td mat-cell *matCellDef="let element">
                   <span
                     class="status-badge"
-                    [ngClass]="element.finalizado ? 'active' : 'inactive'"
+                    [ngClass]="element.finalizado ? 'inactive' : 'active'"
                   >
-                    {{ element.finalizado ? "Vigente" : "Finalizado" }}
+                    {{ element.finalizado ? "Finalizado" : "Vigente" }}
                   </span>
                 </td>
               </ng-container>
