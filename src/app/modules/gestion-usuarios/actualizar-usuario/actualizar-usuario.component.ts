@@ -5,13 +5,15 @@ import {
   ViewChild,
   ChangeDetectorRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { ModalService } from 'src/app/services/modal.service';
-import { ActivatedRoute } from '@angular/router';
+
 import { ImplicitAuthenticationService } from 'src/app/services/implicit-authentication.service';
+import { esFechaFinValida } from 'src/app/shared/utils/fecha';
+import { AlertService } from 'src/app/services/alert.service';
 
 export interface RolRegistro {
   Nombre: string;
@@ -45,14 +47,15 @@ export class ActualizarUsuarioComponent {
   permisoConsulta: boolean = false;
 
   constructor(
-    private historico_service: HistoricoUsuariosMidService,
-    private terceros_service: TercerosService,
-    private autenticacionService: AutenticacionService,
-    private route: ActivatedRoute,
-    private changeDetector: ChangeDetectorRef,
-    private authService: ImplicitAuthenticationService,
-    private modalService: ModalService,
-    private router: Router
+    private readonly alertaService: AlertService,
+    private readonly historico_service: HistoricoUsuariosMidService,
+    private readonly terceros_service: TercerosService,
+    private readonly autenticacionService: AutenticacionService,
+    private readonly route: ActivatedRoute,
+    private readonly changeDetector: ChangeDetectorRef,
+    private readonly authService: ImplicitAuthenticationService,
+    private readonly modalService: ModalService,
+    private readonly router: Router
   ) {}
 
   ngAfterViewInit(): void {
@@ -70,9 +73,7 @@ export class ActualizarUsuarioComponent {
       .getRole()
       .then((roles) => {
         this.permisoEdicion = this.authService.PermisoEdicion(roles);
-        console.log('Permiso de edición:', this.permisoEdicion);
         this.permisoConsulta = this.authService.PermisoConsulta(roles);
-        console.log('Permiso de consulta:', this.permisoConsulta);
       })
       .catch((error) => {
         console.error('Error al obtener los roles del usuario:', error);
@@ -182,14 +183,18 @@ export class ActualizarUsuarioComponent {
   }
 
   ActualizarPeriodo() {
-    this.loading = true;
-    if (this.estadoPeriodo === 'Finalizado') {      
+    if (!esFechaFinValida(this.fechaInicioRol, this.fechaFinRol)) {
+      this.alertaService.showAlert(
+        'Atención',
+        'La fecha final debe ser posterior a la inicial'
+      );
+    }
+
+    if (this.estadoPeriodo === 'Finalizado') {
       this.autenticacionService
         .PostRol('rol/remove', this.nombreRol, this.email)
         .subscribe({
           next: (response: any) => {
-            console.log('Rol eliminado:', response);
-
             this.historico_service
               .put(`periodos-rol-usuarios/${this.idPeriodo}`, {
                 FechaInicio: this.fechaInicioRol?.toISOString().split('T')[0],
@@ -204,7 +209,6 @@ export class ActualizarUsuarioComponent {
               })
               .subscribe({
                 next: (response: any) => {
-                  console.log('Periodo actualizado:', response);
                   this.loading = false;
                   this.modalService.mostrarModal(
                     'Periodo actualizado exitosamente.',
@@ -218,9 +222,9 @@ export class ActualizarUsuarioComponent {
                     'Error al actualizar el periodo.',
                     'warning',
                     'error'
-                  );              
+                  );
                 },
-                complete: () => this.loading = false,
+                complete: () => (this.loading = false),
               });
           },
           error: (err: any) => {
@@ -248,7 +252,6 @@ export class ActualizarUsuarioComponent {
         })
         .subscribe({
           next: (response: any) => {
-            console.log('Periodo actualizado:', response);
             this.modalService.mostrarModal(
               'Periodo actualizado exitosamente.',
               'success',
@@ -261,9 +264,9 @@ export class ActualizarUsuarioComponent {
               'Error al actualizar el periodo.',
               'warning',
               'error'
-            );            
+            );
           },
-          complete: () => this.loading = false,
+          complete: () => (this.loading = false),
         });
     }
   }

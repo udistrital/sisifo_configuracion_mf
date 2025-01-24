@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { HttpClientModule, provideHttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RegistrarUsuarioComponent } from './registrar-usuario/registrar-usuario.component';
 import { GestionUsuariosRoutingModule } from './gestion-usuarios-routing.module';
 
@@ -14,8 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { NgFor } from '@angular/common';
-import { MatCard, MatCardModule } from '@angular/material/card';
+
+import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -25,6 +25,7 @@ import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios
 import { TercerosService } from 'src/app/services/terceros.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatDialogModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    MatTooltipModule,
   ],
   providers: [HistoricoUsuariosMidService, TercerosService],
 })

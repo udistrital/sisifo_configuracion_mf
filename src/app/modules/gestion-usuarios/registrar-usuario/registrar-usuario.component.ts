@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { HistoricoUsuariosMidService } from 'src/app/services/historico-usuarios-mid.service';
 import { TercerosService } from 'src/app/services/terceros.service';
 import { ModalService } from 'src/app/services/modal.service';
+import { esFechaFinValida } from 'src/app/shared/utils/fecha';
+import { AlertService } from 'src/app/services/alert.service';
 
 export interface RolRegistro {
   Nombre: string;
@@ -29,11 +31,12 @@ export class RegistrarUsuarioComponent {
   loading = false;
 
   constructor(
-    private historico_service: HistoricoUsuariosMidService,
-    private terceros_service: TercerosService,
-    private autenticacionService: AutenticacionService,
-    private modalService: ModalService,
-    private router: Router,
+    private readonly alertaService: AlertService,
+    private readonly historico_service: HistoricoUsuariosMidService,
+    private readonly terceros_service: TercerosService,
+    private readonly autenticacionService: AutenticacionService,
+    private readonly modalService: ModalService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -72,42 +75,49 @@ export class RegistrarUsuarioComponent {
     rolId: number,
     email: string
   ) {
-    this.loading = true;
-  
+    if (!esFechaFinValida(fechaInicio, fechaFin)) {
+      this.alertaService.showAlert(
+        'Atención',
+        'La fecha final debe ser posterior a la inicial'
+      );
+    }
+
     const fechaInicioFormato = this.formatDate(fechaInicio);
     const fechaFinFormato = this.formatDate(fechaFin);
     const usuario = { Documento: documento };
     const nombreRol = this.roles.find((r) => r.Id === rolId)?.NombreWso2 || '';
-  
-    this.historico_service.get(`usuarios?query=documento:${documento}`).subscribe({
-      next: (response: any) => {
-        if (response?.Data?.length > 0) {
-          const usuarioExistente = response.Data[0];
-          this.verificarPeriodos(
-            usuarioExistente.Id,
-            documento,
-            fechaInicioFormato,
-            fechaFinFormato,
-            rolId,
-            nombreRol,
-            email
-          );
-        } else {
-          this.crearNuevoUsuario(
-            usuario,
-            fechaInicioFormato,
-            fechaFinFormato,
-            rolId,
-            nombreRol,
-            email
-          );
-        }
-      },
-      error: () => this.mostrarError('Error al verificar el usuario.'),
-      complete: () => (this.loading = false),
-    });
+
+    this.historico_service
+      .get(`usuarios?query=documento:${documento}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response?.Data?.length > 0) {
+            const usuarioExistente = response.Data[0];
+            this.verificarPeriodos(
+              usuarioExistente.Id,
+              documento,
+              fechaInicioFormato,
+              fechaFinFormato,
+              rolId,
+              nombreRol,
+              email
+            );
+          } else {
+            this.crearNuevoUsuario(
+              usuario,
+              fechaInicioFormato,
+              fechaFinFormato,
+              rolId,
+              nombreRol,
+              email
+            );
+          }
+        },
+        error: () => this.mostrarError('Error al verificar el usuario.'),
+        complete: () => (this.loading = false),
+      });
   }
-  
+
   private verificarPeriodos(
     usuarioId: number,
     documento: string,
@@ -120,12 +130,11 @@ export class RegistrarUsuarioComponent {
     this.historico_service.get(`usuarios/${documento}/periodos`).subscribe({
       next: (response: any) => {
         const periodos = response?.Data || [];
-        
+
         const periodoVigente = periodos.find((p: any) => {
-          return p.RolId.Id === Number(rolId) && p.Finalizado === false;          
+          return p.RolId.Id === Number(rolId) && p.Finalizado === false;
         });
-             
-  
+
         if (periodoVigente) {
           this.mostrarError('El usuario ya tiene vigente el rol asignado.');
         } else {
@@ -139,10 +148,11 @@ export class RegistrarUsuarioComponent {
           );
         }
       },
-      error: () => this.mostrarError('Error al verificar los periodos del usuario.'),
+      error: () =>
+        this.mostrarError('Error al verificar los periodos del usuario.'),
     });
   }
-  
+
   private crearNuevoUsuario(
     usuario: any,
     fechaInicio: string,
@@ -165,7 +175,7 @@ export class RegistrarUsuarioComponent {
       error: () => this.mostrarError('Error al crear el usuario.'),
     });
   }
-  
+
   private crearPeriodoRol(
     usuarioId: number,
     fechaInicio: string,
@@ -181,7 +191,7 @@ export class RegistrarUsuarioComponent {
       RolId: { Id: rolId },
       UsuarioId: { Id: usuarioId },
     };
-  
+
     this.historico_service.post('periodos-rol-usuarios/', periodo).subscribe({
       next: () => {
         this.asignarRol(nombreRol, email);
@@ -189,7 +199,7 @@ export class RegistrarUsuarioComponent {
       error: () => this.mostrarError('Error al crear el periodo.'),
     });
   }
-  
+
   private asignarRol(nombreRol: string, email: string) {
     this.autenticacionService.PostRol('rol/add', nombreRol, email).subscribe({
       next: () => {
@@ -200,14 +210,15 @@ export class RegistrarUsuarioComponent {
         );
       },
       error: () => this.mostrarError('Error al asignar el rol al usuario.'),
-      complete: () => (this.loading = false),
+      complete: () =>
+        this.router.navigate(['gestion-usuarios/consulta-usuarios']),
     });
   }
-  
+
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
-  
+
   private mostrarError(mensaje: string) {
     this.modalService.mostrarModal(mensaje, 'warning', 'error');
     this.loading = false;
@@ -233,7 +244,6 @@ export class RegistrarUsuarioComponent {
               'warning',
               'error'
             );
-            //this.loading = false;
           }
         },
         error: (err: any) => {
@@ -259,7 +269,6 @@ export class RegistrarUsuarioComponent {
 
     this.nombreCompleto = '';
     this.emailInput.nativeElement.value = '';
-    
 
     this.loading = true;
     this.autenticacionService
@@ -336,5 +345,11 @@ export class RegistrarUsuarioComponent {
 
   regresar() {
     this.router.navigate(['gestion-usuarios/consulta-usuarios']);
+  }
+
+  evitarLetraE(event: Event) {
+    //esto ya que el input number permite la letra e
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '');
   }
 }
