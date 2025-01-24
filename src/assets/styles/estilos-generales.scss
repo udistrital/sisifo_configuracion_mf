@@ -19,3 +19,17 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+
+.rounded-table {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius: 4px;
+}

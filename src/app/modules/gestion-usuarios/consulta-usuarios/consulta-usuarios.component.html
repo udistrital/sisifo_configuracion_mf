@@ -29,7 +29,7 @@
           class="form"
           appearance="outline"
           [formGroup]="formUsuarios"
-          class="col-12 col-md-6 col-lg-4"
+          class="col-12 col-md-8 col-lg-5"
         >
           <mat-label class="label">Documento de identidad o correo</mat-label>
           <mat-icon matPrefix color="primary">badge</mat-icon>
@@ -60,78 +60,80 @@
 
       <div class="row">
         <div class="col-12">
-          <div class="table-container">
-            <table mat-table [dataSource]="dataSource">
+          <div class="table-container rounded-table table-scroll">
+            <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
               <!-- Nombre Column -->
               <ng-container matColumnDef="nombre">
-                <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <th mat-header-cell *matHeaderCellDef>
+                  <mat-label><b>Nombre</b></mat-label>
+                </th>
+                <td mat-cell *matCellDef="let element">
                   {{ element.nombre }}
-                </mat-cell>
+                </td>
               </ng-container>
 
               <!-- Documento Column -->
               <ng-container matColumnDef="documento">
-                <mat-header-cell *matHeaderCellDef>Documento</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <th mat-header-cell *matHeaderCellDef><b>Documento</b></th>
+                <td mat-cell *matCellDef="let element">
                   {{ element.documento }}
-                </mat-cell>
+                </td>
               </ng-container>
 
               <!-- Correo Column -->
               <ng-container matColumnDef="correo">
-                <mat-header-cell *matHeaderCellDef>Correo</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <th mat-header-cell *matHeaderCellDef><b>Correo</b></th>
+                <td mat-cell *matCellDef="let element">
                   {{ element.correo }}
-                </mat-cell>
+                </td>
               </ng-container>
 
               <!-- Rol Usuario Column -->
               <ng-container matColumnDef="rolUsuario">
-                <mat-header-cell *matHeaderCellDef>Rol Usuario</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <th mat-header-cell *matHeaderCellDef><b>Rol Usuario</b></th>
+                <td mat-cell *matCellDef="let element">
                   {{ element.rol_usuario }}
-                </mat-cell>
+                </td>
+              </ng-container>
+
+              <!-- Periodo Column -->
+              <ng-container matColumnDef="periodo">
+                <th mat-header-cell *matHeaderCellDef>
+                  <b>Periodo</b>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-label
+                    class="link"
+                    [matTooltipPosition]="'right'"
+                    matTooltip="La vigencia del rol empezó el {{
+                      formatFecha(element.fecha_inicial)
+                    }} y {{
+                      element.finalizado ? 'término el' : 'estará vigente hasta'
+                    }} {{ formatFecha(element.fecha_final) }}."
+                  >
+                    {{ element.fecha_inicial | date : "shortDate" }} - <br />
+                    {{ element.fecha_final | date : "shortDate" }}
+                  </mat-label>
+                </td>
               </ng-container>
 
               <!-- Estado Column -->
               <ng-container matColumnDef="estado">
-                <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{ element.estado ? "Activo" : "Inactivo" }}
-                </mat-cell>
-              </ng-container>
-
-              <!-- Fecha Inicial Column -->
-              <ng-container matColumnDef="fechaInicial">
-                <mat-header-cell *matHeaderCellDef
-                  >Fecha Inicial</mat-header-cell
-                >
-                <mat-cell *matCellDef="let element">
-                  {{ element.fecha_inicial | date : "shortDate" }}
-                </mat-cell>
-              </ng-container>
-
-              <!-- Fecha Final Column -->
-              <ng-container matColumnDef="fechaFinal">
-                <mat-header-cell *matHeaderCellDef>Fecha Final</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{ element.fecha_final | date : "shortDate" }}
-                </mat-cell>
-              </ng-container>
-
-              <!-- Finalizado Column -->
-              <ng-container matColumnDef="finalizado">
-                <mat-header-cell *matHeaderCellDef>Finalizado</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{ element.finalizado ? "Finalizado" : "Vigente" }}
-                </mat-cell>
+                <th mat-header-cell *matHeaderCellDef><b>Estado</b></th>
+                <td mat-cell *matCellDef="let element">
+                  <span
+                    class="status-badge"
+                    [ngClass]="element.finalizado ? 'inactive' : 'active'"
+                  >
+                    {{ element.finalizado ? "Finalizado" : "Vigente" }}
+                  </span>
+                </td>
               </ng-container>
 
               <!-- Acciones Column -->
               <ng-container matColumnDef="acciones">
-                <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <th mat-header-cell *matHeaderCellDef><b>Acciones</b></th>
+                <td mat-cell *matCellDef="let element">
                   <ng-container *ngIf="element.estado">
                     <button mat-icon-button [matMenuTriggerFor]="menu">
                       <mat-icon>more_vert</mat-icon>
@@ -154,16 +156,12 @@
                       </button>
                     </mat-menu>
                   </ng-container>
-                </mat-cell>
+                </td>
               </ng-container>
 
               <!-- Definir las filas y columnas a mostrar -->
-              <mat-header-row
-                *matHeaderRowDef="displayedColumns"
-              ></mat-header-row>
-              <mat-row
-                *matRowDef="let row; columns: displayedColumns"
-              ></mat-row>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             </table>
           </div>
           <mat-paginator

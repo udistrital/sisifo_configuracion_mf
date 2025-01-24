@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { SpinnerIntercerptor } from './core/intercerptors/spinner.interceptor';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [AppComponent, SpinnerComponent],
@@ -16,7 +15,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     BrowserAnimationsModule,
     AppRoutingModule,
     MatIconModule,
-    MatProgressSpinnerModule,
   ],
   providers: [provideHttpClient(withInterceptors([SpinnerIntercerptor]))],
   bootstrap: [AppComponent],
