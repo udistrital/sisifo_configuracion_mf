@@ -8,8 +8,7 @@ import { AuthGuard } from 'src/_guards/auth.guard';
 export const routes: Routes = [
   {
     path: 'gestion-usuarios',
-    //todo: descomentar
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: () =>
       import('./modules/gestion-usuarios/gestion-usuarios.module').then(
         (m) => m.GestionUsuariosModule
